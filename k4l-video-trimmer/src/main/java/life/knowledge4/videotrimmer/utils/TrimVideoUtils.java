@@ -150,7 +150,7 @@ public class TrimVideoUtils {
 
             if (Arrays.binarySearch(track.getSyncSamples(), currentSample + 1) >= 0) {
                 // samples always start with 1 but we start with zero therefore +1
-                timeOfSyncSamples[Arrays.binarySearch(track.getSyncSamples(), currentSample + 1)] = currentTime;
+                timeOfSyncSamples[Arrays.binarySearch(track.getSyncSamples(), currentSample+1)] = currentTime;
             }
             currentTime += (double) delta / (double) track.getTrackMetaData().getTimescale();
             currentSample++;
@@ -170,8 +170,8 @@ public class TrimVideoUtils {
         return timeOfSyncSamples[timeOfSyncSamples.length - 1];
     }
 
-    public static String stringForTime(int timeMs) {
-        int totalSeconds = timeMs / 1000;
+    public static String stringForTime(long timeMs) {
+        int totalSeconds =(int) timeMs / 1000;
 
         int seconds = totalSeconds % 60;
         int minutes = (totalSeconds / 60) % 60;

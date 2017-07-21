@@ -139,7 +139,7 @@ public class ProgressBarView extends View implements OnRangeSeekBarListener, OnP
     }
 
     @Override
-    public void updateProgress(int time, int max, float scale) {
+    public void updateProgress(long time, long max, float scale) {
 
         if (scale == 0) {
             mProgressRect = new Rect(0, mBackgroundRect.top, 0, mBackgroundRect.bottom);
