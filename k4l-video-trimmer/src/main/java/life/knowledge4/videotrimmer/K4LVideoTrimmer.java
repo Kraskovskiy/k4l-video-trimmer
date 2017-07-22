@@ -56,6 +56,7 @@ import life.knowledge4.videotrimmer.interfaces.OnK4LVideoListener;
 import life.knowledge4.videotrimmer.interfaces.OnProgressVideoListener;
 import life.knowledge4.videotrimmer.interfaces.OnRangeSeekBarListener;
 import life.knowledge4.videotrimmer.interfaces.OnTrimVideoListener;
+import life.knowledge4.videotrimmer.utils.AndroidUtilities;
 import life.knowledge4.videotrimmer.utils.BackgroundExecutor;
 import life.knowledge4.videotrimmer.utils.TrimVideoUtils;
 import life.knowledge4.videotrimmer.utils.UiThreadExecutor;
@@ -63,13 +64,14 @@ import life.knowledge4.videotrimmer.view.ProgressBarView;
 import life.knowledge4.videotrimmer.view.RangeSeekBarView;
 import life.knowledge4.videotrimmer.view.Thumb;
 import life.knowledge4.videotrimmer.view.TimeLineView;
+import life.knowledge4.videotrimmer.view.VideoTimelineView;
 
 import static life.knowledge4.videotrimmer.utils.TrimVideoUtils.stringForTime;
 
 public class K4LVideoTrimmer extends FrameLayout {
 
     private static final String TAG = K4LVideoTrimmer.class.getSimpleName();
-    private static final int MIN_TIME_FRAME = 500;
+    private static final int MIN_TIME_FRAME = 200;
     private static final int SHOW_PROGRESS = 2;
 
     private SeekBar mHolderTopView;
@@ -81,6 +83,7 @@ public class K4LVideoTrimmer extends FrameLayout {
     private TextView mTextTimeFrame;
     private TextView mTextTime;
     private TimeLineView mTimeLineView;
+    private VideoTimelineView videoTimelineView;
 
     private ProgressBarView mVideoProgressIndicator;
     private Uri mSrc;
@@ -115,7 +118,9 @@ public class K4LVideoTrimmer extends FrameLayout {
             return;
         }
 
-        LayoutInflater.from(context).inflate(R.layout.view_time_line, this, true);
+        LayoutInflater.from(context).inflate(R.layout.view_time_line_v2, this, true);
+
+        AndroidUtilities.checkDisplaySize(context);
 
         mHolderTopView = ((SeekBar) findViewById(R.id.handlerTop));
         mVideoProgressIndicator = ((ProgressBarView) findViewById(R.id.timeVideoView));
@@ -127,6 +132,7 @@ public class K4LVideoTrimmer extends FrameLayout {
         mTextTimeFrame = ((TextView) findViewById(R.id.textTimeSelection));
         mTextTime = ((TextView) findViewById(R.id.textTime));
         mTimeLineView = ((TimeLineView) findViewById(R.id.timeLineView));
+        videoTimelineView = ((VideoTimelineView) findViewById(R.id.videoTimelineView));
 
         setUpListeners();
         setUpMargins();
@@ -288,6 +294,10 @@ public class K4LVideoTrimmer extends FrameLayout {
             //notify that video trimming started
             if (mOnTrimVideoListener != null)
                 mOnTrimVideoListener.onTrimStarted();
+
+            videoTimelineView.getLeftProgress();
+            videoTimelineView.getLeft();
+            videoTimelineView.getRightProgress();
 
             BackgroundExecutor.execute(
                     new BackgroundExecutor.Task("", 0L, "") {
@@ -575,6 +585,8 @@ public class K4LVideoTrimmer extends FrameLayout {
         mVideoView.requestFocus();
 
         mTimeLineView.setVideo(mSrc);
+
+        setVideoTimelineView();
     }
 
     private static class MessageHandler extends Handler {
@@ -598,5 +610,72 @@ public class K4LVideoTrimmer extends FrameLayout {
                 sendEmptyMessageDelayed(0, 10);
             }
         }
+    }
+
+    private void setVideoTimelineView(){
+        videoTimelineView.setVideoPath(mSrc.getPath());
+        videoTimelineView.setDelegate(new VideoTimelineView.VideoTimelineViewDelegate() {
+            @Override
+            public void onLeftProgressChanged(float progress) {
+                onSeekThumbs(Thumb.LEFT,progress*100);
+              /*  if (videoPlayer == null || !playerPrepared) {
+                    return;
+                }
+                try {
+                    if (videoPlayer.isPlaying()) {
+                        videoPlayer.pause();
+                        playButton.setImageResource(R.drawable.video_edit_play);
+                        try {
+                            getParentActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                        } catch (Exception e) {
+                            FileLog.e(e);
+                        }
+                    }
+                    videoPlayer.setOnSeekCompleteListener(null);
+                    videoPlayer.seekTo((int) (videoDuration * progress));
+                } catch (Exception e) {
+                    FileLog.e(e);
+                }
+                needSeek = true;
+                videoSeekBarView.setProgress(videoTimelineView.getLeftProgress());
+                updateVideoInfo();*/
+            }
+
+            @Override
+            public void onRifhtProgressChanged(float progress) {
+                onSeekThumbs(Thumb.RIGHT,progress*100);
+              /*  if (videoPlayer == null || !playerPrepared) {
+                    return;
+                }
+                try {
+                    if (videoPlayer.isPlaying()) {
+                        videoPlayer.pause();
+                        playButton.setImageResource(R.drawable.video_edit_play);
+                        try {
+                            getParentActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                        } catch (Exception e) {
+                            FileLog.e(e);
+                        }
+                    }
+                    videoPlayer.setOnSeekCompleteListener(null);
+                    videoPlayer.seekTo((int) (videoDuration * progress));
+                } catch (Exception e) {
+                    FileLog.e(e);
+                }
+                needSeek = true;
+                videoSeekBarView.setProgress(videoTimelineView.getLeftProgress());
+                updateVideoInfo();*/
+            }
+
+            @Override
+            public void didStartDragging() {
+
+            }
+
+            @Override
+            public void didStopDragging() {
+
+            }
+        });
     }
 }
