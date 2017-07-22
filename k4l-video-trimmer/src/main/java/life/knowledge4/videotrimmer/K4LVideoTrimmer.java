@@ -38,6 +38,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -79,6 +80,7 @@ public class K4LVideoTrimmer extends FrameLayout {
     private View mTimeInfoContainer;
     private VideoView mVideoView;
     private ImageView mPlayView;
+    private LinearLayout mControlWrapper;
     private TextView mTextSize;
     private TextView mTextTimeFrame;
     private TextView mTextTime;
@@ -133,6 +135,7 @@ public class K4LVideoTrimmer extends FrameLayout {
         mTextTime = ((TextView) findViewById(R.id.textTime));
         mTimeLineView = ((TimeLineView) findViewById(R.id.timeLineView));
         videoTimelineView = ((VideoTimelineView) findViewById(R.id.videoTimelineView));
+        mControlWrapper = ((LinearLayout) findViewById(R.id.controlWrapper));
 
         setUpListeners();
         setUpMargins();
@@ -424,7 +427,7 @@ public class K4LVideoTrimmer extends FrameLayout {
     }
 
     private void setNewSize() {
-        long fileSizeInKB = (long) ((mOriginSizeFile / 1024)*calcNewFileSizeRatio());
+        long fileSizeInKB = (long) ((mOriginSizeFile / 1024) * calcNewFileSizeRatio());
 
         if (fileSizeInKB > 1000) {
             long fileSizeInMB = fileSizeInKB / 1024;
@@ -435,12 +438,12 @@ public class K4LVideoTrimmer extends FrameLayout {
     }
 
     private float calcNewFileSizeRatio() {
-        if (mDuration==0) return 0;
-        float newFileSizeRatio = (float)(mEndPosition-mStartPosition) / mDuration;
-        if (newFileSizeRatio<1.0f) {
-            newFileSizeRatio+=((1-newFileSizeRatio)*0.15f );
+        if (mDuration == 0) return 0;
+        float newFileSizeRatio = (float) (mEndPosition - mStartPosition) / mDuration;
+        if (newFileSizeRatio < 1.0f) {
+            newFileSizeRatio += ((1 - newFileSizeRatio) * 0.15f);
         }
-        Log.e(TAG, "calcNewFileSize: "+newFileSizeRatio);
+        Log.e(TAG, "calcNewFileSize: " + newFileSizeRatio);
         return newFileSizeRatio;
     }
 
@@ -512,6 +515,11 @@ public class K4LVideoTrimmer extends FrameLayout {
             long pos = 1000L * position / mDuration;
             mHolderTopView.setProgress((int) pos);
         }
+    }
+
+
+    public void showControlButton(boolean show) {
+        mControlWrapper.setVisibility(show ? VISIBLE : GONE);
     }
 
     /**

@@ -41,6 +41,7 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
             //mVideoTrimmer.setDestinationPath("/storage/emulated/0/DCIM/CameraCustom/");
             mVideoTrimmer.setVideoURI(Uri.parse(path));
             mVideoTrimmer.setVideoInformationVisibility(true);
+            mVideoTrimmer.showControlButton(true);
         }
     }
 
