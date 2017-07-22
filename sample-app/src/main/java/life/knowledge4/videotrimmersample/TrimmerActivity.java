@@ -90,7 +90,7 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(TrimmerActivity.this, "onVideoPrepared", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(TrimmerActivity.this, "onVideoPrepared", Toast.LENGTH_SHORT).show();
             }
         });
     }
