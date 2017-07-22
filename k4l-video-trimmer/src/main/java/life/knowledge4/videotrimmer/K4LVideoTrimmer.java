@@ -268,7 +268,7 @@ public class K4LVideoTrimmer extends FrameLayout {
         mVideoProgressIndicator.setLayoutParams(lp);
     }
 
-    private void onSaveClicked() {
+    public void onSaveClicked() {
         if (mStartPosition <= 0 && mEndPosition >= mDuration) {
             if (mOnTrimVideoListener != null)
                 mOnTrimVideoListener.getResult(mSrc);
@@ -294,10 +294,6 @@ public class K4LVideoTrimmer extends FrameLayout {
             //notify that video trimming started
             if (mOnTrimVideoListener != null)
                 mOnTrimVideoListener.onTrimStarted();
-
-            videoTimelineView.getLeftProgress();
-            videoTimelineView.getLeft();
-            videoTimelineView.getRightProgress();
 
             BackgroundExecutor.execute(
                     new BackgroundExecutor.Task("", 0L, "") {
@@ -332,7 +328,7 @@ public class K4LVideoTrimmer extends FrameLayout {
         }
     }
 
-    private void onCancelClicked() {
+    public void onCancelClicked() {
         mVideoView.stopPlayback();
         if (mOnTrimVideoListener != null) {
             mOnTrimVideoListener.cancelAction();
@@ -350,7 +346,7 @@ public class K4LVideoTrimmer extends FrameLayout {
 
     private void onPlayerIndicatorSeekChanged(int progress, boolean fromUser) {
 
-        long duration = ((mDuration * progress)/1000L);
+        long duration = ((mDuration * progress) / 1000L);
 
         if (fromUser) {
             if (duration < mStartPosition) {
@@ -376,7 +372,7 @@ public class K4LVideoTrimmer extends FrameLayout {
         mVideoView.pause();
         mPlayView.setVisibility(View.VISIBLE);
 
-        long duration =  ((mDuration * seekBar.getProgress())/1000);
+        long duration = ((mDuration * seekBar.getProgress()) / 1000);
         mVideoView.seekTo(duration);
         setTimeVideo(duration);
         notifyProgressUpdate(false);
@@ -427,10 +423,31 @@ public class K4LVideoTrimmer extends FrameLayout {
         mTextTime.setText(String.format("%s %s", stringForTime(position), seconds));
     }
 
+    private void setNewSize() {
+        long fileSizeInKB = (long) ((mOriginSizeFile / 1024)*calcNewFileSizeRatio());
+
+        if (fileSizeInKB > 1000) {
+            long fileSizeInMB = fileSizeInKB / 1024;
+            mTextSize.setText(String.format("~%s %s", fileSizeInMB, getContext().getString(R.string.megabyte)));
+        } else {
+            mTextSize.setText(String.format("~%s %s", fileSizeInKB, getContext().getString(R.string.kilobyte)));
+        }
+    }
+
+    private float calcNewFileSizeRatio() {
+        if (mDuration==0) return 0;
+        float newFileSizeRatio = (float)(mEndPosition-mStartPosition) / mDuration;
+        if (newFileSizeRatio<1.0f) {
+            newFileSizeRatio+=((1-newFileSizeRatio)*0.15f );
+        }
+        Log.e(TAG, "calcNewFileSize: "+newFileSizeRatio);
+        return newFileSizeRatio;
+    }
+
     private void onSeekThumbs(int index, float value) {
         switch (index) {
             case Thumb.LEFT: {
-                mStartPosition = (long)((mDuration * value) / 100L);
+                mStartPosition = (long) ((mDuration * value) / 100L);
                 mVideoView.seekTo(mStartPosition);
                 break;
             }
@@ -492,7 +509,7 @@ public class K4LVideoTrimmer extends FrameLayout {
 
     private void setProgressBarPosition(long position) {
         if (mDuration > 0) {
-           long pos =1000L * position / mDuration;
+            long pos = 1000L * position / mDuration;
             mHolderTopView.setProgress((int) pos);
         }
     }
@@ -612,12 +629,13 @@ public class K4LVideoTrimmer extends FrameLayout {
         }
     }
 
-    private void setVideoTimelineView(){
+    private void setVideoTimelineView() {
         videoTimelineView.setVideoPath(mSrc.getPath());
         videoTimelineView.setDelegate(new VideoTimelineView.VideoTimelineViewDelegate() {
             @Override
             public void onLeftProgressChanged(float progress) {
-                onSeekThumbs(Thumb.LEFT,progress*100);
+                onSeekThumbs(Thumb.LEFT, progress * 100);
+                setNewSize();
               /*  if (videoPlayer == null || !playerPrepared) {
                     return;
                 }
@@ -643,7 +661,8 @@ public class K4LVideoTrimmer extends FrameLayout {
 
             @Override
             public void onRifhtProgressChanged(float progress) {
-                onSeekThumbs(Thumb.RIGHT,progress*100);
+                onSeekThumbs(Thumb.RIGHT, progress * 100);
+                setNewSize();
               /*  if (videoPlayer == null || !playerPrepared) {
                     return;
                 }
