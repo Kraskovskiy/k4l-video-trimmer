@@ -24,6 +24,7 @@
 package life.knowledge4.videotrimmer;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Environment;
@@ -80,6 +81,8 @@ public class K4LVideoTrimmer extends FrameLayout {
     private View mTimeInfoContainer;
     private VideoView mVideoView;
     private ImageView mPlayView;
+    private ImageView compressItem;
+    private ImageView muteItem;
     private LinearLayout mControlWrapper;
     private TextView mTextSize;
     private TextView mTextTimeFrame;
@@ -105,6 +108,10 @@ public class K4LVideoTrimmer extends FrameLayout {
     private long mOriginSizeFile;
     private boolean mResetSeekBar = true;
     private final MessageHandler mMessageHandler = new MessageHandler(this);
+    private int defaultVideoWidth;
+    private int defaultVideoHeight;
+    private int compressionsCount = 1;
+    private boolean muteVideo = false;
 
     public K4LVideoTrimmer(@NonNull Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -136,6 +143,8 @@ public class K4LVideoTrimmer extends FrameLayout {
         mTimeLineView = ((TimeLineView) findViewById(R.id.timeLineView));
         videoTimelineView = ((VideoTimelineView) findViewById(R.id.videoTimelineView));
         mControlWrapper = ((LinearLayout) findViewById(R.id.controlWrapper));
+        compressItem = ((ImageView) findViewById(R.id.compressItem));
+        muteItem = ((ImageView) findViewById(R.id.muteItem));
 
         setUpListeners();
         setUpMargins();
@@ -252,6 +261,13 @@ public class K4LVideoTrimmer extends FrameLayout {
                 onVideoCompleted();
             }
         });
+
+        muteItem.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onMuteClick();
+            }
+        });
     }
 
     private void setUpMargins() {
@@ -269,6 +285,55 @@ public class K4LVideoTrimmer extends FrameLayout {
         lp = (RelativeLayout.LayoutParams) mVideoProgressIndicator.getLayoutParams();
         lp.setMargins(marge, 0, marge, 0);
         mVideoProgressIndicator.setLayoutParams(lp);
+    }
+
+    private void onMuteClick() {
+        muteVideo = !muteVideo;
+        if (mVideoView != null) {
+            float volume = muteVideo ? 0.0f : 1.0f;
+            mVideoView.setVolume(volume);
+        }
+        if (muteVideo) {
+            muteItem.setImageResource(R.drawable.volume_off);
+        } else {
+            muteItem.setImageResource(R.drawable.volume_on);
+        }
+    }
+
+    private void getVideoResolution() {
+        MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
+        mediaMetadataRetriever.setDataSource(getContext(), mSrc);
+        defaultVideoWidth = Integer.valueOf(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
+        defaultVideoHeight = Integer.valueOf(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
+        getResolutionType();
+    }
+
+    private void getResolutionType() {
+        if (defaultVideoWidth > 1280 || defaultVideoHeight > 1280) {
+            compressionsCount = 5;
+        } else if (defaultVideoWidth > 848 || defaultVideoHeight > 848) {
+            compressionsCount = 4;
+        } else if (defaultVideoWidth > 640 || defaultVideoHeight > 640) {
+            compressionsCount = 3;
+        } else if (defaultVideoWidth > 480 || defaultVideoHeight > 480) {
+            compressionsCount = 2;
+        } else {
+            compressionsCount = 1;
+        }
+    }
+
+    private void setDefaultVideoResolution(){
+        if (compressionsCount == 1) {
+            compressItem.setImageResource(R.drawable.video_240);
+        } else if (compressionsCount == 2) {
+            compressItem.setImageResource(R.drawable.video_360);
+        } else if (compressionsCount == 3) {
+            compressItem.setImageResource(R.drawable.video_480);
+        } else if (compressionsCount == 4) {
+            compressItem.setImageResource(R.drawable.video_720);
+        } else if (compressionsCount == 5) {
+            compressItem.setImageResource(R.drawable.video_1080);
+        }
     }
 
     public void onSaveClicked() {
@@ -393,6 +458,8 @@ public class K4LVideoTrimmer extends FrameLayout {
         if (mOnK4LVideoListener != null) {
             mOnK4LVideoListener.onVideoPrepared();
         }
+        getVideoResolution();
+        setDefaultVideoResolution();
     }
 
     private void setSeekBarPosition() {
@@ -443,7 +510,6 @@ public class K4LVideoTrimmer extends FrameLayout {
         if (newFileSizeRatio < 1.0f) {
             newFileSizeRatio += ((1 - newFileSizeRatio) * 0.15f);
         }
-        Log.e(TAG, "calcNewFileSize: " + newFileSizeRatio);
         return newFileSizeRatio;
     }
 
