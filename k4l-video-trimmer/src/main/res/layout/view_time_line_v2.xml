@@ -57,18 +57,6 @@
                 android:layout_marginLeft="5dp" />
 
             <TextView
-                android:id="@+id/textTimeSelection"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/textSize"
-                android:layout_toLeftOf="@+id/textTime"
-                android:gravity="center"
-                android:textColor="@android:color/white"
-                android:text="time"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
-
-            <TextView
                 android:id="@+id/textTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -79,6 +67,20 @@
                 android:visibility="gone" />
 
         </RelativeLayout>
+
+        <TextView
+            android:id="@+id/textTimeSelection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/textSize"
+            android:layout_toLeftOf="@+id/textTime"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:text="time"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_above="@+id/videoTimelineView"
+            android:layout_below="@+id/timeText" />
 
         <SeekBar
             android:id="@+id/handlerTop"

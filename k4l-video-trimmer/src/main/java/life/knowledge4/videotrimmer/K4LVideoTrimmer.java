@@ -498,7 +498,11 @@ public class K4LVideoTrimmer extends FrameLayout {
 
         if (fileSizeInKB > 1000) {
             long fileSizeInMB = fileSizeInKB / 1024;
-            mTextSize.setText(String.format("~%s %s", fileSizeInMB, getContext().getString(R.string.megabyte)));
+            if (fileSizeInMB<100) {
+                mTextSize.setText(String.format("~%s %s", fileSizeInMB, getContext().getString(R.string.megabyte)));
+            } else {
+                mTextSize.setText(String.format("%s%s", String.format("~%s %s", fileSizeInMB, getContext().getString(R.string.megabyte)), getContext().getString(R.string.size_file_overflow)));
+            }
         } else {
             mTextSize.setText(String.format("~%s %s", fileSizeInKB, getContext().getString(R.string.kilobyte)));
         }
