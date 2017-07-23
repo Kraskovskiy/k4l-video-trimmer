@@ -158,10 +158,18 @@
 
         </LinearLayout>
 
+        <life.knowledge4.videotrimmer.view.QualityChooseView
+            android:id="@+id/qualityChooseView"
+            android:layout_width="match_parent"
+            android:layout_below="@+id/controlWrapper"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:layout_height="40dp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/controlWrapper"
+            android:layout_below="@+id/qualityChooseView"
             android:orientation="horizontal"
             android:id="@+id/editWrapper">
 

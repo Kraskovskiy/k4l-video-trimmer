@@ -63,6 +63,7 @@ import life.knowledge4.videotrimmer.utils.BackgroundExecutor;
 import life.knowledge4.videotrimmer.utils.TrimVideoUtils;
 import life.knowledge4.videotrimmer.utils.UiThreadExecutor;
 import life.knowledge4.videotrimmer.view.ProgressBarView;
+import life.knowledge4.videotrimmer.view.QualityChooseView;
 import life.knowledge4.videotrimmer.view.RangeSeekBarView;
 import life.knowledge4.videotrimmer.view.Thumb;
 import life.knowledge4.videotrimmer.view.TimeLineView;
@@ -89,6 +90,7 @@ public class K4LVideoTrimmer extends FrameLayout {
     private TextView mTextTime;
     private TimeLineView mTimeLineView;
     private VideoTimelineView videoTimelineView;
+    private QualityChooseView qualityChooseView;
 
     private ProgressBarView mVideoProgressIndicator;
     private Uri mSrc;
@@ -111,6 +113,7 @@ public class K4LVideoTrimmer extends FrameLayout {
     private int defaultVideoWidth;
     private int defaultVideoHeight;
     private int compressionsCount = 1;
+    private int selectedCompression = 1;
     private boolean muteVideo = false;
 
     public K4LVideoTrimmer(@NonNull Context context, AttributeSet attrs) {
@@ -145,6 +148,7 @@ public class K4LVideoTrimmer extends FrameLayout {
         mControlWrapper = ((LinearLayout) findViewById(R.id.controlWrapper));
         compressItem = ((ImageView) findViewById(R.id.compressItem));
         muteItem = ((ImageView) findViewById(R.id.muteItem));
+        qualityChooseView = ((QualityChooseView) findViewById(R.id.qualityChooseView));
 
         setUpListeners();
         setUpMargins();
@@ -266,6 +270,17 @@ public class K4LVideoTrimmer extends FrameLayout {
             @Override
             public void onClick(View view) {
                 onMuteClick();
+            }
+        });
+
+        compressItem.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (qualityChooseView.isShown()) {
+                    qualityChooseView.setVisibility(GONE);
+                } else {
+                    qualityChooseView.setVisibility(VISIBLE);
+                }
             }
         });
     }
@@ -460,6 +475,7 @@ public class K4LVideoTrimmer extends FrameLayout {
         }
         getVideoResolution();
         setDefaultVideoResolution();
+        qualityChooseView.setOriginalCompression(compressionsCount);
     }
 
     private void setSeekBarPosition() {
