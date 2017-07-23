@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import life.knowledge4.videotrimmer.interfaces.OnQualityChooseListener;
 import life.knowledge4.videotrimmer.utils.AndroidUtilities;
 
 public class QualityChooseView extends View {
@@ -29,6 +30,7 @@ public class QualityChooseView extends View {
     private int compressionsCount;
     private int selectedCompression;
     private String originalHeight;
+    private OnQualityChooseListener onQualityChooseListener;
 
     public QualityChooseView(@NonNull Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -47,7 +49,12 @@ public class QualityChooseView extends View {
 
     public void setOriginalCompression(int compressionsCount) {
         this.compressionsCount = compressionsCount;
+        this.selectedCompression = compressionsCount;
         setOriginalHeight();
+    }
+
+    public void setOnQualityChooseListener(OnQualityChooseListener onQualityChooseListener) {
+        this.onQualityChooseListener = onQualityChooseListener;
     }
 
     private void init() {
@@ -56,6 +63,7 @@ public class QualityChooseView extends View {
         textPaint.setTextSize(AndroidUtilities.dp(12));
         textPaint.setColor(0xffcdcdcd);
         this.compressionsCount = 2;
+        this.selectedCompression = 2;
     }
 
     private void setOriginalHeight() {
@@ -71,6 +79,11 @@ public class QualityChooseView extends View {
             originalHeight = "1080";
         }
     }
+
+  private void setSelectedCompression(int selectedCompression){
+      if (onQualityChooseListener==null) return;
+      onQualityChooseListener.selectedResolution(selectedCompression+1);
+  }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -99,6 +112,7 @@ public class QualityChooseView extends View {
                     if (x > cx - diff && x < cx + diff) {
                         if (selectedCompression != a) {
                             selectedCompression = a;
+                            setSelectedCompression(selectedCompression);
                             //  didChangedCompressionLevel(false);
                             invalidate();
                         }
@@ -113,6 +127,7 @@ public class QualityChooseView extends View {
                     if (x > cx - AndroidUtilities.dp(15) && x < cx + AndroidUtilities.dp(15)) {
                         if (selectedCompression != a) {
                             selectedCompression = a;
+                            setSelectedCompression(selectedCompression);
                             // didChangedCompressionLevel(true);
                             invalidate();
                         }

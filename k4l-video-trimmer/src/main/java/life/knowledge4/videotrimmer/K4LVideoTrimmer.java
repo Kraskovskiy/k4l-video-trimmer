@@ -56,6 +56,7 @@ import java.util.List;
 
 import life.knowledge4.videotrimmer.interfaces.OnK4LVideoListener;
 import life.knowledge4.videotrimmer.interfaces.OnProgressVideoListener;
+import life.knowledge4.videotrimmer.interfaces.OnQualityChooseListener;
 import life.knowledge4.videotrimmer.interfaces.OnRangeSeekBarListener;
 import life.knowledge4.videotrimmer.interfaces.OnTrimVideoListener;
 import life.knowledge4.videotrimmer.utils.AndroidUtilities;
@@ -114,6 +115,7 @@ public class K4LVideoTrimmer extends FrameLayout {
     private int defaultVideoHeight;
     private int compressionsCount = 1;
     private int selectedCompression = 1;
+    private float qualitySize = 1;
     private boolean muteVideo = false;
 
     public K4LVideoTrimmer(@NonNull Context context, AttributeSet attrs) {
@@ -278,11 +280,24 @@ public class K4LVideoTrimmer extends FrameLayout {
             public void onClick(View view) {
                 if (qualityChooseView.isShown()) {
                     qualityChooseView.setVisibility(GONE);
-                } else {
+                } else if (compressionsCount > 1) {
                     qualityChooseView.setVisibility(VISIBLE);
                 }
             }
         });
+        qualityChooseView.setOnQualityChooseListener(new OnQualityChooseListener() {
+            @Override
+            public void selectedResolution(int selectedCompression) {
+                onQualityChoseChanges(selectedCompression);
+            }
+        });
+    }
+
+    private void onQualityChoseChanges(int selectedCompression) {
+        qualitySize =(float) selectedCompression / compressionsCount;
+        this.selectedCompression = selectedCompression;
+        setDefaultVideoResolution(selectedCompression);
+        setNewSize();
     }
 
     private void setUpMargins() {
@@ -337,7 +352,7 @@ public class K4LVideoTrimmer extends FrameLayout {
         }
     }
 
-    private void setDefaultVideoResolution(){
+    private void setDefaultVideoResolution(int compressionsCount) {
         if (compressionsCount == 1) {
             compressItem.setImageResource(R.drawable.video_240);
         } else if (compressionsCount == 2) {
@@ -474,7 +489,7 @@ public class K4LVideoTrimmer extends FrameLayout {
             mOnK4LVideoListener.onVideoPrepared();
         }
         getVideoResolution();
-        setDefaultVideoResolution();
+        setDefaultVideoResolution(compressionsCount);
         qualityChooseView.setOriginalCompression(compressionsCount);
     }
 
@@ -514,7 +529,7 @@ public class K4LVideoTrimmer extends FrameLayout {
 
         if (fileSizeInKB > 1000) {
             long fileSizeInMB = fileSizeInKB / 1024;
-            if (fileSizeInMB<100) {
+            if (fileSizeInMB < 100) {
                 mTextSize.setText(String.format("~%s %s", fileSizeInMB, getContext().getString(R.string.megabyte)));
             } else {
                 mTextSize.setText(String.format("%s%s", String.format("~%s %s", fileSizeInMB, getContext().getString(R.string.megabyte)), getContext().getString(R.string.size_file_overflow)));
@@ -530,6 +545,7 @@ public class K4LVideoTrimmer extends FrameLayout {
         if (newFileSizeRatio < 1.0f) {
             newFileSizeRatio += ((1 - newFileSizeRatio) * 0.15f);
         }
+        newFileSizeRatio *= qualitySize;
         return newFileSizeRatio;
     }
 
