@@ -53,22 +53,20 @@ public class VideoTimelineView  extends View {
 
     public VideoTimelineView(@NonNull Context context, AttributeSet attrs) {
         this(context, attrs, 0);
-        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(0xffffffff);
-        paint2 = new Paint();
-        paint2.setColor(0x7f000000);
+        init();
     }
 
     public VideoTimelineView(@NonNull Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setColor(0xffffffff);
-        paint2 = new Paint();
-        paint2.setColor(0x7f000000);
+        init();
     }
 
     public VideoTimelineView(Context context) {
         super(context);
+        init();
+    }
+
+    private void init(){
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setColor(0xffffffff);
         paint2 = new Paint();

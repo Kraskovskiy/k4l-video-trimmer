@@ -27,18 +27,20 @@ public class VideoSeekBarView  extends View {
 
     public VideoSeekBarView(@NonNull Context context, AttributeSet attrs) {
         this(context, attrs, 0);
-        paint.setColor(0xff5c5c5c);
-        paint2.setColor(0xffffffff);
+        init();
     }
 
     public VideoSeekBarView(@NonNull Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        paint.setColor(0xff5c5c5c);
-        paint2.setColor(0xffffffff);
+        init();
     }
 
     public VideoSeekBarView(Context context) {
         super(context);
+        init();
+    }
+
+    private void init(){
         paint.setColor(0xff5c5c5c);
         paint2.setColor(0xffffffff);
     }

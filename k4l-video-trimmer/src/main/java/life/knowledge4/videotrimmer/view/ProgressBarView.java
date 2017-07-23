@@ -49,6 +49,7 @@ public class ProgressBarView extends View implements OnRangeSeekBarListener, OnP
 
     public ProgressBarView(@NonNull Context context, AttributeSet attrs) {
         this(context, attrs, 0);
+        init();
     }
 
     public ProgressBarView(@NonNull Context context, AttributeSet attrs, int defStyleAttr) {
