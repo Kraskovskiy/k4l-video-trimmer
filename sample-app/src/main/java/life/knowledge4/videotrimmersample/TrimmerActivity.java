@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import life.knowledge4.videotrimmer.K4LVideoTrimmer;
@@ -39,6 +40,7 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
             mVideoTrimmer.setOnTrimVideoListener(this);
             mVideoTrimmer.setOnK4LVideoListener(this);
             //mVideoTrimmer.setDestinationPath("/storage/emulated/0/DCIM/CameraCustom/");
+            //Log.e("TAG", "onCreate: "+ Uri.parse(path).toString() );
             mVideoTrimmer.setVideoURI(Uri.parse(path));
             mVideoTrimmer.setVideoInformationVisibility(true);
             mVideoTrimmer.showControlButton(true);
@@ -60,9 +62,9 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
                 Toast.makeText(TrimmerActivity.this, getString(R.string.video_saved_at, uri.getPath()), Toast.LENGTH_SHORT).show();
             }
         });
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+       /* Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         intent.setDataAndType(uri, "video/mp4");
-        startActivity(intent);
+        startActivity(intent);*/
         finish();
     }
 

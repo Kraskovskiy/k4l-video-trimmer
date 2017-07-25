@@ -55,13 +55,13 @@ public class TrimVideoUtils {
     private static final String TAG = TrimVideoUtils.class.getSimpleName();
 
     public static void startTrim(@NonNull File src, @NonNull String dst, long startMs, long endMs, @NonNull OnTrimVideoListener callback) throws IOException {
-        final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
-        final String fileName = "MP4_" + timeStamp + ".mp4";
-        final String filePath = dst + fileName;
+      /*  final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+        final String fileName = "MP4_" + "timeStamp" + ".mp4";
+        final String filePath = dst + fileName;*/
 
-        File file = new File(filePath);
-        file.getParentFile().mkdirs();
-        Log.d(TAG, "Generated file path " + filePath);
+        File file = new File(dst);
+       // file.getParentFile().mkdirs();
+        //Log.d(TAG, "Generated file path " + filePath);
         genVideoUsingMp4Parser(src, file, startMs, endMs, callback);
     }
 
@@ -137,8 +137,8 @@ public class TrimVideoUtils {
 
         fc.close();
         fos.close();
-        if (callback != null)
-            callback.getResult(Uri.parse(dst.toString()));
+       /* if (callback != null)
+            callback.getResult(Uri.parse(dst.toString()));*/
     }
 
     private static double correctTimeToSyncSample(@NonNull Track track, double cutHere, boolean next) {

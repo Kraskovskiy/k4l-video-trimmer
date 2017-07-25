@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -82,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void startTrimActivity(@NonNull Uri uri) {
         Intent intent = new Intent(this, TrimmerActivity.class);
+        //Log.e("TAG", "startTrimActivity: "+FileUtils.getPath(this, Uri.parse("content://com.android.providers.media.documents/document/video%3A1387")) );
         intent.putExtra(EXTRA_VIDEO_PATH, FileUtils.getPath(this, uri));
         startActivity(intent);
     }

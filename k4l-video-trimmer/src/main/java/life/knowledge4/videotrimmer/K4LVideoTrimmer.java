@@ -24,7 +24,6 @@
 package life.knowledge4.videotrimmer;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Environment;
@@ -51,8 +50,12 @@ import com.devbrackets.android.exomedia.ui.widget.VideoView;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import life.knowledge4.videotrimmer.interfaces.OnK4LVideoListener;
 import life.knowledge4.videotrimmer.interfaces.OnProgressVideoListener;
@@ -61,6 +64,7 @@ import life.knowledge4.videotrimmer.interfaces.OnRangeSeekBarListener;
 import life.knowledge4.videotrimmer.interfaces.OnTrimVideoListener;
 import life.knowledge4.videotrimmer.utils.AndroidUtilities;
 import life.knowledge4.videotrimmer.utils.BackgroundExecutor;
+import life.knowledge4.videotrimmer.utils.TranscodeVideoUtils;
 import life.knowledge4.videotrimmer.utils.TrimVideoUtils;
 import life.knowledge4.videotrimmer.utils.UiThreadExecutor;
 import life.knowledge4.videotrimmer.view.ProgressBarView;
@@ -114,9 +118,10 @@ public class K4LVideoTrimmer extends FrameLayout {
     private int defaultVideoWidth;
     private int defaultVideoHeight;
     private int compressionsCount = 1;
-    private int selectedCompression = 1;
+    private int selectedCompression = -1;
     private float qualitySize = 1;
     private boolean muteVideo = false;
+    private Context mContext;
 
     public K4LVideoTrimmer(@NonNull Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -131,6 +136,8 @@ public class K4LVideoTrimmer extends FrameLayout {
         if (isInEditMode()) {
             return;
         }
+
+        mContext = context.getApplicationContext();
 
         LayoutInflater.from(context).inflate(R.layout.view_time_line_v2, this, true);
 
@@ -294,7 +301,7 @@ public class K4LVideoTrimmer extends FrameLayout {
     }
 
     private void onQualityChoseChanges(int selectedCompression) {
-        qualitySize =(float) selectedCompression / compressionsCount;
+        qualitySize = (float) selectedCompression / compressionsCount;
         this.selectedCompression = selectedCompression;
         setDefaultVideoResolution(selectedCompression);
         setNewSize();
@@ -339,13 +346,13 @@ public class K4LVideoTrimmer extends FrameLayout {
     }
 
     private void getResolutionType() {
-        if (defaultVideoWidth > 1280 || defaultVideoHeight > 1280) {
+        if (defaultVideoWidth >= 1080 || defaultVideoHeight >= 1080) {
             compressionsCount = 5;
-        } else if (defaultVideoWidth > 848 || defaultVideoHeight > 848) {
+        } else if (defaultVideoWidth >= 720 || defaultVideoHeight >= 720) {
             compressionsCount = 4;
-        } else if (defaultVideoWidth > 640 || defaultVideoHeight > 640) {
+        } else if (defaultVideoWidth >= 480 || defaultVideoHeight >= 480) {
             compressionsCount = 3;
-        } else if (defaultVideoWidth > 480 || defaultVideoHeight > 480) {
+        } else if (defaultVideoWidth >= 360 || defaultVideoHeight >= 360) {
             compressionsCount = 2;
         } else {
             compressionsCount = 1;
@@ -367,7 +374,10 @@ public class K4LVideoTrimmer extends FrameLayout {
     }
 
     public void onSaveClicked() {
-        if (mStartPosition <= 0 && mEndPosition >= mDuration) {
+        final boolean needTrim = !(mStartPosition <= 0 && mEndPosition >= mDuration);
+        final boolean needCompression = !((selectedCompression == compressionsCount) || selectedCompression == -1);
+        final String destPath = getDestinationPath();
+        if (!needTrim && !needCompression) {
             if (mOnTrimVideoListener != null)
                 mOnTrimVideoListener.getResult(mSrc);
         } else {
@@ -398,7 +408,17 @@ public class K4LVideoTrimmer extends FrameLayout {
                         @Override
                         public void execute() {
                             try {
-                                TrimVideoUtils.startTrim(file, getDestinationPath(), mStartPosition, mEndPosition, mOnTrimVideoListener);
+                                if (needTrim) {
+                                    TrimVideoUtils.startTrim(file, destPath, mStartPosition, mEndPosition, mOnTrimVideoListener);
+                                }
+
+                                if (needCompression) {
+                                    TranscodeVideoUtils.getDefaultFileInfo(mContext, needTrim ? Uri.parse(destPath) : mSrc, getTranscodeDestinationPath());
+                                    TranscodeVideoUtils.setResolutionAndQuality(selectedCompression);
+                                    TranscodeVideoUtils.startTranscode(mContext, progressListener);
+                                } else {
+                                    mOnTrimVideoListener.getResult(Uri.parse(destPath));
+                                }
                             } catch (final Throwable e) {
                                 Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
                             }
@@ -407,6 +427,35 @@ public class K4LVideoTrimmer extends FrameLayout {
             );
         }
     }
+
+
+    public org.m4m.IProgressListener progressListener = new org.m4m.IProgressListener() {
+        @Override
+        public void onMediaStart() {
+        }
+
+        @Override
+        public void onMediaProgress(float progress) {
+        }
+
+        @Override
+        public void onMediaDone() {
+            mOnTrimVideoListener.getResult(Uri.parse(getTranscodeDestinationPath()));
+        }
+
+        @Override
+        public void onMediaPause() {
+        }
+
+        @Override
+        public void onMediaStop() {
+        }
+
+        @Override
+        public void onError(Exception exception) {
+            mOnTrimVideoListener.getResult(Uri.parse(getDestinationPath()));
+        }
+    };
 
     private void onClickVideoPlayPause() {
         if (mVideoView.isPlaying()) {
@@ -435,11 +484,20 @@ public class K4LVideoTrimmer extends FrameLayout {
 
     private String getDestinationPath() {
         if (mFinalPath == null) {
+            final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+            final String fileName = "MP4_" + timeStamp + ".mp4";
             File folder = Environment.getExternalStorageDirectory();
-            mFinalPath = folder.getPath() + File.separator;
+            mFinalPath = folder.getPath() + File.separator + fileName;
             Log.d(TAG, "Using default path " + mFinalPath);
         }
         return mFinalPath;
+    }
+
+    private String getTranscodeDestinationPath() {
+        final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+        final String fileName = "MP4_720" + timeStamp + ".mp4";
+        File folder = Environment.getExternalStorageDirectory();
+        return folder.getPath() + File.separator + fileName;
     }
 
     private void onPlayerIndicatorSeekChanged(int progress, boolean fromUser) {
@@ -528,9 +586,9 @@ public class K4LVideoTrimmer extends FrameLayout {
         long fileSizeInKB = (long) ((mOriginSizeFile / 1024) * calcNewFileSizeRatio());
 
         if (fileSizeInKB > 1000) {
-            long fileSizeInMB = fileSizeInKB / 1024;
+            double fileSizeInMB = (float) fileSizeInKB / 1024f;
             if (fileSizeInMB < 100) {
-                mTextSize.setText(String.format("~%s %s", fileSizeInMB, getContext().getString(R.string.megabyte)));
+                mTextSize.setText(String.format("~%s %s", new DecimalFormat("##.##").format(fileSizeInMB), getContext().getString(R.string.megabyte)));
             } else {
                 mTextSize.setText(String.format("%s%s", String.format("~%s %s", fileSizeInMB, getContext().getString(R.string.megabyte)), getContext().getString(R.string.size_file_overflow)));
             }
@@ -545,7 +603,9 @@ public class K4LVideoTrimmer extends FrameLayout {
         if (newFileSizeRatio < 1.0f) {
             newFileSizeRatio += ((1 - newFileSizeRatio) * 0.15f);
         }
-        newFileSizeRatio *= qualitySize;
+        if (selectedCompression != compressionsCount) {
+            newFileSizeRatio *= (qualitySize * 0.21);
+        }
         return newFileSizeRatio;
     }
 
@@ -746,54 +806,12 @@ public class K4LVideoTrimmer extends FrameLayout {
             public void onLeftProgressChanged(float progress) {
                 onSeekThumbs(Thumb.LEFT, progress * 100);
                 setNewSize();
-              /*  if (videoPlayer == null || !playerPrepared) {
-                    return;
-                }
-                try {
-                    if (videoPlayer.isPlaying()) {
-                        videoPlayer.pause();
-                        playButton.setImageResource(R.drawable.video_edit_play);
-                        try {
-                            getParentActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                        } catch (Exception e) {
-                            FileLog.e(e);
-                        }
-                    }
-                    videoPlayer.setOnSeekCompleteListener(null);
-                    videoPlayer.seekTo((int) (videoDuration * progress));
-                } catch (Exception e) {
-                    FileLog.e(e);
-                }
-                needSeek = true;
-                videoSeekBarView.setProgress(videoTimelineView.getLeftProgress());
-                updateVideoInfo();*/
             }
 
             @Override
             public void onRifhtProgressChanged(float progress) {
                 onSeekThumbs(Thumb.RIGHT, progress * 100);
                 setNewSize();
-              /*  if (videoPlayer == null || !playerPrepared) {
-                    return;
-                }
-                try {
-                    if (videoPlayer.isPlaying()) {
-                        videoPlayer.pause();
-                        playButton.setImageResource(R.drawable.video_edit_play);
-                        try {
-                            getParentActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                        } catch (Exception e) {
-                            FileLog.e(e);
-                        }
-                    }
-                    videoPlayer.setOnSeekCompleteListener(null);
-                    videoPlayer.seekTo((int) (videoDuration * progress));
-                } catch (Exception e) {
-                    FileLog.e(e);
-                }
-                needSeek = true;
-                videoSeekBarView.setProgress(videoTimelineView.getLeftProgress());
-                updateVideoInfo();*/
             }
 
             @Override
