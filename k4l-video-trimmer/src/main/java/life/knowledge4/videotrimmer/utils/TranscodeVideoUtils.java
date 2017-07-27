@@ -10,6 +10,7 @@ import org.m4m.android.AudioFormatAndroid;
 import org.m4m.android.VideoFormatAndroid;
 import org.m4m.domain.MediaCodecInfo;
 
+import java.io.File;
 import java.io.IOException;
 
 public class TranscodeVideoUtils {
@@ -61,36 +62,6 @@ public class TranscodeVideoUtils {
 
     private static boolean isStopped = false;
 
-    /*public org.m4m.IProgressListener progressListener = new org.m4m.IProgressListener() {
-        @Override
-        public void onMediaStart() {
-
-        }
-
-        @Override
-        public void onMediaProgress(float progress) {
-
-        }
-
-        @Override
-        public void onMediaDone() {
-
-        }
-
-        @Override
-        public void onMediaPause() {
-        }
-
-        @Override
-        public void onMediaStop() {
-        }
-
-        @Override
-        public void onError(Exception exception) {
-
-        }
-    };
-*/
     protected static AndroidMediaObjectFactory factory;
 
     public static void setResolutionAndQuality(int outQuality) {

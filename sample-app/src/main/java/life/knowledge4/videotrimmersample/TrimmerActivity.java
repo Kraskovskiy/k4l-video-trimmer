@@ -1,12 +1,18 @@
 package life.knowledge4.videotrimmersample;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import life.knowledge4.videotrimmer.K4LVideoTrimmer;
 import life.knowledge4.videotrimmer.interfaces.OnK4LVideoListener;
@@ -16,6 +22,14 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
 
     private K4LVideoTrimmer mVideoTrimmer;
     private ProgressDialog mProgressDialog;
+
+    private String filePath(Context context){
+        final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+        final String fileName = "MP4_" + timeStamp + ".mp4";
+        File directory = context.getCacheDir();
+        File result = new File(directory, fileName);
+        return result.getPath();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +53,9 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
             mVideoTrimmer.setMaxDuration(960);
             mVideoTrimmer.setOnTrimVideoListener(this);
             mVideoTrimmer.setOnK4LVideoListener(this);
-            //mVideoTrimmer.setDestinationPath("/storage/emulated/0/DCIM/CameraCustom/");
-            //Log.e("TAG", "onCreate: "+ Uri.parse(path).toString() );
+            //mVideoTrimmer.setDestinationPath(filePath(this));
+            Log.e("TAG", "onCreate: "+ Uri.parse(path).toString() );
+            Log.e("TAG", "onCreate:Final "+filePath(this) );
             mVideoTrimmer.setVideoURI(Uri.parse(path));
             mVideoTrimmer.setVideoInformationVisibility(true);
             mVideoTrimmer.showControlButton(true);
@@ -62,7 +77,8 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
                 Toast.makeText(TrimmerActivity.this, getString(R.string.video_saved_at, uri.getPath()), Toast.LENGTH_SHORT).show();
             }
         });
-       /* Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        Log.e("TAG", "getResult "+uri.getPath() );
+      /*  Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         intent.setDataAndType(uri, "video/mp4");
         startActivity(intent);*/
         finish();

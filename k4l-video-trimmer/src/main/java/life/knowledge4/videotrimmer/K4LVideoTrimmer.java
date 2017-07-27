@@ -373,6 +373,21 @@ public class K4LVideoTrimmer extends FrameLayout {
         }
     }
 
+    private String getResolutionName(){
+        if (selectedCompression == 1) {
+           return "240p_";
+        } else if (selectedCompression == 2) {
+            return "360p_";
+        } else if (selectedCompression == 3) {
+            return "480p_";
+        } else if (selectedCompression == 4) {
+            return "720p_";
+        } else if (selectedCompression == 5) {
+            return "1080p_";
+        }
+        return "";
+    }
+
     public void onSaveClicked() {
         final boolean needTrim = !(mStartPosition <= 0 && mEndPosition >= mDuration);
         final boolean needCompression = !((selectedCompression == compressionsCount) || selectedCompression == -1);
@@ -494,10 +509,17 @@ public class K4LVideoTrimmer extends FrameLayout {
     }
 
     private String getTranscodeDestinationPath() {
-        final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
-        final String fileName = "MP4_720" + timeStamp + ".mp4";
-        File folder = Environment.getExternalStorageDirectory();
-        return folder.getPath() + File.separator + fileName;
+        if (mFinalPath == null) {
+            final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+            final String fileName = "MP4_720" + timeStamp + ".mp4";
+            File folder = Environment.getExternalStorageDirectory();
+            return folder.getPath() + File.separator + fileName;
+        } else {
+            File  originalFile = new File(mFinalPath);
+            String name =getResolutionName()+ originalFile.getName();
+            File  transcodeFile = new File(mFinalPath.substring(0, mFinalPath.indexOf(originalFile.getName()))+name);
+            return transcodeFile.getPath();
+        }
     }
 
     private void onPlayerIndicatorSeekChanged(int progress, boolean fromUser) {
