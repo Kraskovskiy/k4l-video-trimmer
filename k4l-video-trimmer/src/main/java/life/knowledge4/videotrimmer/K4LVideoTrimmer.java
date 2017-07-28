@@ -49,6 +49,9 @@ import com.devbrackets.android.exomedia.listener.OnPreparedListener;
 import com.devbrackets.android.exomedia.ui.widget.VideoView;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -373,9 +376,9 @@ public class K4LVideoTrimmer extends FrameLayout {
         }
     }
 
-    private String getResolutionName(){
+    private String getResolutionName() {
         if (selectedCompression == 1) {
-           return "240p_";
+            return "240p_";
         } else if (selectedCompression == 2) {
             return "360p_";
         } else if (selectedCompression == 3) {
@@ -388,13 +391,41 @@ public class K4LVideoTrimmer extends FrameLayout {
         return "";
     }
 
+    private void copyFileToDest(String destPath) {
+        try {
+            InputStream input = mContext.getContentResolver().openInputStream(mSrc);
+            FileOutputStream out = new FileOutputStream(destPath);
+            byte buf[] = new byte[1024];
+            do {
+                int numRead = input.read(buf);
+                if (numRead <= 0)
+                    break;
+                out.write(buf, 0, numRead);
+            } while (true);
+            try {
+                input.close();
+                out.close();
+            } catch (IOException ignore) {
+                return;
+            }
+        } catch (IOException ignore) {
+            return;
+        }
+        mOnTrimVideoListener.getResult(Uri.parse(destPath));
+    }
+
     public void onSaveClicked() {
         final boolean needTrim = !(mStartPosition <= 0 && mEndPosition >= mDuration);
         final boolean needCompression = !((selectedCompression == compressionsCount) || selectedCompression == -1);
         final String destPath = getDestinationPath();
+
+        //notify that video trimming started
+        if (mOnTrimVideoListener != null)
+            mOnTrimVideoListener.onTrimStarted();
+
         if (!needTrim && !needCompression) {
             if (mOnTrimVideoListener != null)
-                mOnTrimVideoListener.getResult(mSrc);
+                copyFileToDest(destPath);
         } else {
             mPlayView.setVisibility(View.VISIBLE);
             mVideoView.pause();
@@ -414,9 +445,9 @@ public class K4LVideoTrimmer extends FrameLayout {
                 }
             }
 
-            //notify that video trimming started
+          /*  //notify that video trimming started
             if (mOnTrimVideoListener != null)
-                mOnTrimVideoListener.onTrimStarted();
+                mOnTrimVideoListener.onTrimStarted();*/
 
             BackgroundExecutor.execute(
                     new BackgroundExecutor.Task("", 0L, "") {
@@ -511,13 +542,13 @@ public class K4LVideoTrimmer extends FrameLayout {
     private String getTranscodeDestinationPath() {
         if (mFinalPath == null) {
             final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
-            final String fileName = "MP4_720" + timeStamp + ".mp4";
+            final String fileName = "MP4_" + getResolutionName() + timeStamp + ".mp4";
             File folder = Environment.getExternalStorageDirectory();
             return folder.getPath() + File.separator + fileName;
         } else {
-            File  originalFile = new File(mFinalPath);
-            String name =getResolutionName()+ originalFile.getName();
-            File  transcodeFile = new File(mFinalPath.substring(0, mFinalPath.indexOf(originalFile.getName()))+name);
+            File originalFile = new File(mFinalPath);
+            String name = getResolutionName() + originalFile.getName();
+            File transcodeFile = new File(mFinalPath.substring(0, mFinalPath.indexOf(originalFile.getName())) + name);
             return transcodeFile.getPath();
         }
     }
