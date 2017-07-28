@@ -49,6 +49,7 @@ import com.devbrackets.android.exomedia.listener.OnPreparedListener;
 import com.devbrackets.android.exomedia.ui.widget.VideoView;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -393,7 +394,7 @@ public class K4LVideoTrimmer extends FrameLayout {
 
     private void copyFileToDest(String destPath) {
         try {
-            InputStream input = mContext.getContentResolver().openInputStream(mSrc);
+            FileInputStream input = new FileInputStream(new File(mSrc.toString()));
             FileOutputStream out = new FileOutputStream(destPath);
             byte buf[] = new byte[1024];
             do {
@@ -406,10 +407,8 @@ public class K4LVideoTrimmer extends FrameLayout {
                 input.close();
                 out.close();
             } catch (IOException ignore) {
-                return;
             }
         } catch (IOException ignore) {
-            return;
         }
         mOnTrimVideoListener.getResult(Uri.parse(destPath));
     }
