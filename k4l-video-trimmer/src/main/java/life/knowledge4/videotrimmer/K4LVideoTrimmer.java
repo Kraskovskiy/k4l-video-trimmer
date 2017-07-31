@@ -784,6 +784,7 @@ public class K4LVideoTrimmer extends FrameLayout {
     public void destroy() {
         BackgroundExecutor.cancelAll("", true);
         UiThreadExecutor.cancelAll("");
+        videoTimelineView.clearFrames();
     }
 
     /**
