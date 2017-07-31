@@ -655,8 +655,8 @@ public class K4LVideoTrimmer extends FrameLayout {
         if (newFileSizeRatio < 1.0f) {
             newFileSizeRatio += ((1 - newFileSizeRatio) * 0.15f);
         }
-        if (selectedCompression != compressionsCount) {
-            newFileSizeRatio *= (qualitySize * 0.21);
+        if (selectedCompression != compressionsCount && selectedCompression != -1) {
+            newFileSizeRatio *= (qualitySize * 0.31);
         }
         return newFileSizeRatio;
     }

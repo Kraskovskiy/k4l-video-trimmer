@@ -74,8 +74,8 @@ public class TrimVideoUtils {
         movie.setTracks(new LinkedList<Track>());
         // remove all tracks we will create new tracks from the old
 
-        double startTime1 = startMs / 1000;
-        double endTime1 = endMs / 1000;
+        double startTime1 = (double) startMs / 1000;
+        double endTime1 = (double) endMs / 1000;
 
         boolean timeCorrected = false;
 
