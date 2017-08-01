@@ -783,7 +783,7 @@ public class K4LVideoTrimmer extends FrameLayout {
     @SuppressWarnings("unused")
     public void setDestinationPath(final String finalPath) {
         mFinalPath = finalPath;
-        Log.d(TAG, "Setting custom path " + mFinalPath);
+       // Log.d(TAG, "Setting custom path " + mFinalPath);
     }
 
     /**
