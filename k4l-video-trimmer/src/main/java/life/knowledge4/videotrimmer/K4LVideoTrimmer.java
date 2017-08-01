@@ -125,6 +125,7 @@ public class K4LVideoTrimmer extends FrameLayout {
     private int selectedCompression = -1;
     private float qualitySize = 1;
     private boolean muteVideo = false;
+    private boolean needPrepared = true;
     private Context mContext;
 
     public K4LVideoTrimmer(@NonNull Context context, AttributeSet attrs) {
@@ -268,7 +269,11 @@ public class K4LVideoTrimmer extends FrameLayout {
         mVideoView.setOnPreparedListener(new OnPreparedListener() {
             @Override
             public void onPrepared() {
-                onVideoPrepared();
+                if (needPrepared) {
+                    onVideoPrepared();
+                } else {
+                    onClickVideoPlayPause();
+                }
             }
         });
 
@@ -686,9 +691,12 @@ public class K4LVideoTrimmer extends FrameLayout {
     }
 
     private void onVideoCompleted() {
-        mVideoView.seekTo(mStartPosition);
+        needPrepared = false;
         mVideoView.restart();
-        mVideoView.setPositionOffset(mStartPosition);
+        mVideoView.seekTo(mStartPosition);
+        setProgressBarPosition(mStartPosition);
+        setTimeFrames();
+        mResetSeekBar = true;
     }
 
     private void notifyProgressUpdate(boolean all) {
@@ -784,7 +792,7 @@ public class K4LVideoTrimmer extends FrameLayout {
     public void destroy() {
         BackgroundExecutor.cancelAll("", true);
         UiThreadExecutor.cancelAll("");
-        videoTimelineView.clearFrames();
+        //videoTimelineView.clearFrames();
     }
 
     /**
