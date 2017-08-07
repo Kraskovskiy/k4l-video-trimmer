@@ -104,7 +104,7 @@ public class TranscodeVideoUtils {
                 videoWidthOut = 720;
             }
         }
-        Log.e("TAG" , "setResolutionAndQuality: " +"videoHeightOut="+videoHeightOut+" videoWidthOut=" +videoWidthOut +" videoBitRateInKBytes="+videoBitRateInKBytes);
+       // Log.e("TAG" , "setResolutionAndQuality: " +"videoHeightOut="+videoHeightOut+" videoWidthOut=" +videoWidthOut +" videoBitRateInKBytes="+videoBitRateInKBytes);
     }
 
 
@@ -197,7 +197,7 @@ public class TranscodeVideoUtils {
         try {
             transcode(context, progressListener);
         } catch (Exception ignore) {
-            Log.e("TAG", "ExceptionTranscode: " + ignore);
+            progressListener.onError(ignore);
         }
     }
 

@@ -538,7 +538,7 @@ public class K4LVideoTrimmer extends FrameLayout {
             final String fileName = "MP4_" + timeStamp + ".mp4";
             File folder = Environment.getExternalStorageDirectory();
             mFinalPath = folder.getPath() + File.separator + fileName;
-            Log.d(TAG, "Using default path " + mFinalPath);
+            //Log.d(TAG, "Using default path " + mFinalPath);
         }
         return mFinalPath;
     }
