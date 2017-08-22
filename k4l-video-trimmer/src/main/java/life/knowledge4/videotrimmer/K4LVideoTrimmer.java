@@ -419,7 +419,7 @@ public class K4LVideoTrimmer extends FrameLayout {
     }
 
     public void onSaveClicked() {
-        final boolean needTrim = !(mStartPosition <= 0 && mEndPosition >= mDuration);
+        final boolean needTrim = !(mStartPosition <= 0 && mEndPosition >= mDuration) || muteVideo;
         final boolean needCompression = !((selectedCompression == compressionsCount) || selectedCompression == -1);
         final String destPath = getDestinationPath();
 
@@ -459,7 +459,7 @@ public class K4LVideoTrimmer extends FrameLayout {
                         public void execute() {
                             try {
                                 if (needTrim) {
-                                    TrimVideoUtils.startTrim(file, destPath, mStartPosition, mEndPosition, mOnTrimVideoListener);
+                                    TrimVideoUtils.startTrim(file, destPath, mStartPosition, mEndPosition, muteVideo, mOnTrimVideoListener);
                                 }
 
                                 if (needCompression) {
@@ -783,7 +783,7 @@ public class K4LVideoTrimmer extends FrameLayout {
     @SuppressWarnings("unused")
     public void setDestinationPath(final String finalPath) {
         mFinalPath = finalPath;
-       // Log.d(TAG, "Setting custom path " + mFinalPath);
+        // Log.d(TAG, "Setting custom path " + mFinalPath);
     }
 
     /**

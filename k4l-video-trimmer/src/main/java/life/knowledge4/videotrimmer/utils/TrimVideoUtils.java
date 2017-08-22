@@ -54,7 +54,7 @@ public class TrimVideoUtils {
 
     private static final String TAG = TrimVideoUtils.class.getSimpleName();
 
-    public static void startTrim(@NonNull File src, @NonNull String dst, long startMs, long endMs, @NonNull OnTrimVideoListener callback) throws IOException {
+    public static void startTrim(@NonNull File src, @NonNull String dst, long startMs, long endMs, boolean muteVideo, @NonNull OnTrimVideoListener callback) throws IOException {
       /*  final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         final String fileName = "MP4_" + "timeStamp" + ".mp4";
         final String filePath = dst + fileName;*/
@@ -62,10 +62,10 @@ public class TrimVideoUtils {
         File file = new File(dst);
        // file.getParentFile().mkdirs();
         //Log.d(TAG, "Generated file path " + filePath);
-        genVideoUsingMp4Parser(src, file, startMs, endMs, callback);
+        genVideoUsingMp4Parser(src, file, startMs, endMs, muteVideo, callback);
     }
 
-    private static void genVideoUsingMp4Parser(@NonNull File src, @NonNull File dst, long startMs, long endMs, @NonNull OnTrimVideoListener callback) throws IOException {
+    private static void genVideoUsingMp4Parser(@NonNull File src, @NonNull File dst, long startMs, long endMs, boolean muteVideo, @NonNull OnTrimVideoListener callback) throws IOException {
         // NOTE: Switched to using FileDataSourceViaHeapImpl since it does not use memory mapping (VM).
         // Otherwise we get OOM with large movie files.
         Movie movie = MovieCreator.build(new FileDataSourceViaHeapImpl(src.getAbsolutePath()));
@@ -76,7 +76,6 @@ public class TrimVideoUtils {
 
         double startTime1 = (double) startMs / 1000;
         double endTime1 = (double) endMs / 1000;
-
         boolean timeCorrected = false;
 
         // Here we try to find a track that has sync samples. Since we can only start decoding
@@ -104,9 +103,10 @@ public class TrimVideoUtils {
             long startSample1 = -1;
             long endSample1 = -1;
 
+            if (muteVideo && track.getHandler().contains("soun")) continue;
+
             for (int i = 0; i < track.getSampleDurations().length; i++) {
                 long delta = track.getSampleDurations()[i];
-
 
                 if (currentTime > lastTime && currentTime <= startTime1) {
                     // current sample is still before the new starttime
