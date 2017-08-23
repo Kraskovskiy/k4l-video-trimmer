@@ -426,7 +426,7 @@ public class K4LVideoTrimmer extends FrameLayout {
         if (isFileOverSize()) {
             if (mOnTrimVideoListener != null)
                 mOnTrimVideoListener.cancelAction();
-           return;
+            return;
         }
 
         //notify that video trimming started
@@ -673,6 +673,10 @@ public class K4LVideoTrimmer extends FrameLayout {
             } else {
                 if (fileSizeInMB < 200 && fileSizeInMBAfterDecode < 100) {
                     return false;
+                }
+                if (fileSizeInMB >= 200) {
+                    mTextSize.setText(String.format("%s%s", String.format("~%s %s! ", new DecimalFormat("##.##").format(fileSizeInMB),
+                            getContext().getString(R.string.megabyte)), getContext().getString(R.string.size_file_overflow_original)));
                 }
                 return true;
             }
