@@ -423,6 +423,10 @@ public class K4LVideoTrimmer extends FrameLayout {
         final boolean needCompression = !((selectedCompression == compressionsCount) || selectedCompression == -1);
         final String destPath = getDestinationPath();
 
+        if (isFileOverSize()) {
+           return;
+        }
+
         //notify that video trimming started
         if (mOnTrimVideoListener != null)
             mOnTrimVideoListener.onTrimStarted();
@@ -470,7 +474,8 @@ public class K4LVideoTrimmer extends FrameLayout {
                                     mOnTrimVideoListener.getResult(Uri.parse(destPath));
                                 }
                             } catch (final Throwable e) {
-                                Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
+                                mOnTrimVideoListener.getResult(mSrc);
+                                //Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
                             }
                         }
                     }
@@ -647,10 +652,30 @@ public class K4LVideoTrimmer extends FrameLayout {
             if (fileSizeInMB < 100) {
                 mTextSize.setText(String.format("~%s %s", new DecimalFormat("##.##").format(fileSizeInMB), getContext().getString(R.string.megabyte)));
             } else {
-                mTextSize.setText(String.format("%s%s", String.format("~%s %s", fileSizeInMB, getContext().getString(R.string.megabyte)), getContext().getString(R.string.size_file_overflow)));
+                mTextSize.setText(String.format("%s%s", String.format("~%s %s! ", new DecimalFormat("##.##").format(fileSizeInMB), getContext().getString(R.string.megabyte)), getContext().getString(R.string.size_file_overflow)));
             }
         } else {
             mTextSize.setText(String.format("~%s %s", fileSizeInKB, getContext().getString(R.string.kilobyte)));
+        }
+    }
+
+    private boolean isFileOverSize() {
+        long fileSizeInKB = (mOriginSizeFile / 1024);
+        long fileSizeInKBAfterDecode = (long) ((mOriginSizeFile / 1024) * calcNewFileSizeRatio());
+
+        if (fileSizeInKB > 1000) {
+            double fileSizeInMB = (float) fileSizeInKB / 1024f;
+            double fileSizeInMBAfterDecode = (float) fileSizeInKBAfterDecode / 1024f;
+            if (fileSizeInMB < 100) {
+                return false;
+            } else {
+                if (fileSizeInMB < 200 && fileSizeInMBAfterDecode < 100) {
+                    return false;
+                }
+                return true;
+            }
+        } else {
+            return false;
         }
     }
 
@@ -658,10 +683,10 @@ public class K4LVideoTrimmer extends FrameLayout {
         if (mDuration == 0) return 0;
         float newFileSizeRatio = (float) (mEndPosition - mStartPosition) / mDuration;
         if (newFileSizeRatio < 1.0f) {
-            newFileSizeRatio += ((1 - newFileSizeRatio) * 0.15f);
+            newFileSizeRatio += ((1 - newFileSizeRatio) * 0.24f);
         }
         if (selectedCompression != compressionsCount && selectedCompression != -1) {
-            newFileSizeRatio *= (qualitySize * 0.31);
+            newFileSizeRatio *= (qualitySize * 0.39);
         }
         return newFileSizeRatio;
     }
@@ -823,7 +848,11 @@ public class K4LVideoTrimmer extends FrameLayout {
 
             if (fileSizeInKB > 1000) {
                 long fileSizeInMB = fileSizeInKB / 1024;
-                mTextSize.setText(String.format("%s %s", fileSizeInMB, getContext().getString(R.string.megabyte)));
+                if (fileSizeInMB < 100) {
+                    mTextSize.setText(String.format("~%s %s", new DecimalFormat("##.##").format(fileSizeInMB), getContext().getString(R.string.megabyte)));
+                } else {
+                    mTextSize.setText(String.format("%s%s", String.format("~%s %s! ", new DecimalFormat("##.##").format(fileSizeInMB), getContext().getString(R.string.megabyte)), getContext().getString(R.string.size_file_overflow)));
+                }
             } else {
                 mTextSize.setText(String.format("%s %s", fileSizeInKB, getContext().getString(R.string.kilobyte)));
             }
