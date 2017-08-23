@@ -424,6 +424,8 @@ public class K4LVideoTrimmer extends FrameLayout {
         final String destPath = getDestinationPath();
 
         if (isFileOverSize()) {
+            if (mOnTrimVideoListener != null)
+                mOnTrimVideoListener.cancelAction();
            return;
         }
 
