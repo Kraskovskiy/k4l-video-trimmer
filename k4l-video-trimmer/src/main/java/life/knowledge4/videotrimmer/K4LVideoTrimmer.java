@@ -473,9 +473,13 @@ public class K4LVideoTrimmer extends FrameLayout {
                                     TranscodeVideoUtils.setResolutionAndQuality(selectedCompression);
                                     TranscodeVideoUtils.startTranscode(mContext, progressListener);
                                 } else {
-                                    mOnTrimVideoListener.getResult(Uri.parse(destPath));
+                                    if (new File(destPath).length()>30000) {
+                                        mOnTrimVideoListener.getResult(Uri.parse(destPath));
+                                    } else {
+                                        mOnTrimVideoListener.getResult(mSrc);
+                                    }
                                 }
-                            } catch (final Throwable e) {
+                            } catch (Exception e) {
                                 mOnTrimVideoListener.getResult(mSrc);
                                 //Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
                             }
