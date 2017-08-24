@@ -52,8 +52,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.nio.channels.FileChannel;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -473,19 +473,48 @@ public class K4LVideoTrimmer extends FrameLayout {
                                     TranscodeVideoUtils.setResolutionAndQuality(selectedCompression);
                                     TranscodeVideoUtils.startTranscode(mContext, progressListener);
                                 } else {
-                                    if (new File(destPath).length()>30000) {
+                                    if (new File(destPath).length() > 30000) {
                                         mOnTrimVideoListener.getResult(Uri.parse(destPath));
                                     } else {
-                                        mOnTrimVideoListener.getResult(mSrc);
+                                        copyFile(new File(mSrc.getPath()), new File(destPath));
+                                        mOnTrimVideoListener.getResult(Uri.parse(destPath));
                                     }
                                 }
                             } catch (Exception e) {
-                                mOnTrimVideoListener.getResult(mSrc);
-                                //Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e);
+                                try {
+                                    copyFile(new File(mSrc.getPath()), new File(destPath));
+                                } catch (IOException ignore) {
+                                }
+                                mOnTrimVideoListener.getResult(Uri.parse(destPath));
                             }
                         }
                     }
             );
+        }
+    }
+
+    public static void copyFile(File sourceFile, File destFile) throws IOException {
+        if (!destFile.getParentFile().exists())
+            destFile.getParentFile().mkdirs();
+
+        if (!destFile.exists()) {
+            destFile.createNewFile();
+        }
+
+        FileChannel source = null;
+        FileChannel destination = null;
+
+        try {
+            source = new FileInputStream(sourceFile).getChannel();
+            destination = new FileOutputStream(destFile).getChannel();
+            destination.transferFrom(source, 0, source.size());
+        } finally {
+            if (source != null) {
+                source.close();
+            }
+            if (destination != null) {
+                destination.close();
+            }
         }
     }
 
