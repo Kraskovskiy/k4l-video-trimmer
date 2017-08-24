@@ -469,7 +469,7 @@ public class K4LVideoTrimmer extends FrameLayout {
                                 }
 
                                 if (needCompression) {
-                                    TranscodeVideoUtils.getDefaultFileInfo(mContext, needTrim ? Uri.parse(destPath) : mSrc, getTranscodeDestinationPath());
+                                    TranscodeVideoUtils.getDefaultFileInfo(mContext, needTrim && (new File(destPath).length() > 30000) ? Uri.parse(destPath) : mSrc, getTranscodeDestinationPath());
                                     TranscodeVideoUtils.setResolutionAndQuality(selectedCompression);
                                     TranscodeVideoUtils.startTranscode(mContext, progressListener);
                                 } else {
