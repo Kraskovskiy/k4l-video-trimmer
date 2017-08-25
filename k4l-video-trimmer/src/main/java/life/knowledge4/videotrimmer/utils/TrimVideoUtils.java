@@ -60,7 +60,7 @@ public class TrimVideoUtils {
         final String filePath = dst + fileName;*/
 
         File file = new File(dst);
-       // file.getParentFile().mkdirs();
+        // file.getParentFile().mkdirs();
         //Log.d(TAG, "Generated file path " + filePath);
         genVideoUsingMp4Parser(src, file, startMs, endMs, muteVideo, callback);
     }
@@ -125,7 +125,7 @@ public class TrimVideoUtils {
 
         dst.getParentFile().mkdirs();
 
-        if (!dst.exists()) {
+        if (dst.delete() || !dst.exists()) {
             dst.createNewFile();
         }
 
@@ -150,7 +150,7 @@ public class TrimVideoUtils {
 
             if (Arrays.binarySearch(track.getSyncSamples(), currentSample + 1) >= 0) {
                 // samples always start with 1 but we start with zero therefore +1
-                timeOfSyncSamples[Arrays.binarySearch(track.getSyncSamples(), currentSample+1)] = currentTime;
+                timeOfSyncSamples[Arrays.binarySearch(track.getSyncSamples(), currentSample + 1)] = currentTime;
             }
             currentTime += (double) delta / (double) track.getTrackMetaData().getTimescale();
             currentSample++;
@@ -171,7 +171,7 @@ public class TrimVideoUtils {
     }
 
     public static String stringForTime(long timeMs) {
-        int totalSeconds =(int) timeMs / 1000;
+        int totalSeconds = (int) timeMs / 1000;
 
         int seconds = totalSeconds % 60;
         int minutes = (totalSeconds / 60) % 60;

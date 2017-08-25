@@ -498,7 +498,7 @@ public class K4LVideoTrimmer extends FrameLayout {
         if (!destFile.getParentFile().exists())
             destFile.getParentFile().mkdirs();
 
-        if (!destFile.exists()) {
+        if (destFile.delete() || !destFile.exists()) {
             destFile.createNewFile();
         }
 
