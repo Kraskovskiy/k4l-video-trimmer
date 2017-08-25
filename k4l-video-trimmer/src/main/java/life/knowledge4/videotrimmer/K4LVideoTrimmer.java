@@ -804,6 +804,16 @@ public class K4LVideoTrimmer extends FrameLayout {
         }
     }
 
+    public boolean isOriginalFileOverSize() {
+        long fileSizeInKB = (mOriginSizeFile / 1024);
+        if (fileSizeInKB > 1000) {
+            double fileSizeInMB = (float) fileSizeInKB / 1024f;
+            if (fileSizeInMB > 200) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public void showControlButton(boolean show) {
         mControlWrapper.setVisibility(show ? VISIBLE : GONE);
@@ -893,7 +903,7 @@ public class K4LVideoTrimmer extends FrameLayout {
                 } else {
                     mTextSize.setText(String.format("%s%s", String.format("~%s %s! ", new DecimalFormat("##.##").format(fileSizeInMB), getContext().getString(R.string.megabyte)), getContext().getString(R.string.size_file_overflow)));
                 }
-                if (fileSizeInMB>200) {
+                if (fileSizeInMB > 200) {
                     Toast.makeText(mContext, R.string.size_file_overflow_original, Toast.LENGTH_SHORT).show();
                     if (mOnTrimVideoListener != null) {
                         mOnTrimVideoListener.cancelAction();
