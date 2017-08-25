@@ -214,7 +214,7 @@ public class K4LVideoTrimmer extends FrameLayout {
             @Override
             public boolean onError(Exception e) {
                 if (mOnTrimVideoListener != null)
-                    mOnTrimVideoListener.onError("Something went wrong");
+                    exceptionHandler();
                 return false;
             }
         });
@@ -544,24 +544,28 @@ public class K4LVideoTrimmer extends FrameLayout {
 
         @Override
         public void onError(Exception exception) {
-            if (new File(getDestinationPath()).length() > 30000) {
-                mOnTrimVideoListener.getResult(Uri.parse(getDestinationPath()));
-            } else {
-                BackgroundExecutor.execute(
-                        new BackgroundExecutor.Task("", 0L, "") {
-                            @Override
-                            public void execute() {
-                                try {
-                                    copyFile(new File(mSrc.getPath()), new File(getDestinationPath()));
-                                    mOnTrimVideoListener.getResult(Uri.parse(getDestinationPath()));
-                                } catch (IOException e) {
-                                    mOnTrimVideoListener.cancelAction();
-                                }
-                            }
-                        });
-            }
+            exceptionHandler();
         }
     };
+
+    private void exceptionHandler() {
+        if (new File(getDestinationPath()).length() > 30000) {
+            mOnTrimVideoListener.getResult(Uri.parse(getDestinationPath()));
+        } else {
+            BackgroundExecutor.execute(
+                    new BackgroundExecutor.Task("", 0L, "") {
+                        @Override
+                        public void execute() {
+                            try {
+                                copyFile(new File(mSrc.getPath()), new File(getDestinationPath()));
+                                mOnTrimVideoListener.getResult(Uri.parse(getDestinationPath()));
+                            } catch (IOException e) {
+                                mOnTrimVideoListener.cancelAction();
+                            }
+                        }
+                    });
+        }
+    }
 
     private void onClickVideoPlayPause() {
         if (mVideoView.isPlaying()) {
