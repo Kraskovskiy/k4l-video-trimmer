@@ -544,7 +544,22 @@ public class K4LVideoTrimmer extends FrameLayout {
 
         @Override
         public void onError(Exception exception) {
-            mOnTrimVideoListener.getResult(Uri.parse(getDestinationPath()));
+            if (new File(getDestinationPath()).length() > 30000) {
+                mOnTrimVideoListener.getResult(Uri.parse(getDestinationPath()));
+            } else {
+                BackgroundExecutor.execute(
+                        new BackgroundExecutor.Task("", 0L, "") {
+                            @Override
+                            public void execute() {
+                                try {
+                                    copyFile(new File(mSrc.getPath()), new File(getDestinationPath()));
+                                    mOnTrimVideoListener.getResult(Uri.parse(getDestinationPath()));
+                                } catch (IOException e) {
+                                    mOnTrimVideoListener.cancelAction();
+                                }
+                            }
+                        });
+            }
         }
     };
 
