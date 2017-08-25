@@ -42,6 +42,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.devbrackets.android.exomedia.listener.OnCompletionListener;
 import com.devbrackets.android.exomedia.listener.OnErrorListener;
@@ -891,6 +892,13 @@ public class K4LVideoTrimmer extends FrameLayout {
                     mTextSize.setText(String.format("~%s %s", new DecimalFormat("##.##").format(fileSizeInMB), getContext().getString(R.string.megabyte)));
                 } else {
                     mTextSize.setText(String.format("%s%s", String.format("~%s %s! ", new DecimalFormat("##.##").format(fileSizeInMB), getContext().getString(R.string.megabyte)), getContext().getString(R.string.size_file_overflow)));
+                }
+                if (fileSizeInMB>200) {
+                    Toast.makeText(mContext, R.string.size_file_overflow_original, Toast.LENGTH_SHORT).show();
+                    if (mOnTrimVideoListener != null) {
+                        mOnTrimVideoListener.cancelAction();
+                    }
+                    return;
                 }
             } else {
                 mTextSize.setText(String.format("%s %s", fileSizeInKB, getContext().getString(R.string.kilobyte)));
