@@ -469,6 +469,8 @@ public class K4LVideoTrimmer extends FrameLayout {
                                     TrimVideoUtils.startTrim(file, destPath, mStartPosition, mEndPosition, muteVideo, mOnTrimVideoListener);
                                 }
 
+                                mOnTrimVideoListener.onProgress(0.13f);
+
                                 if (needCompression) {
                                     TranscodeVideoUtils.getDefaultFileInfo(mContext, needTrim && (new File(destPath).length() > 30000) ? Uri.parse(destPath) : mSrc, getTranscodeDestinationPath());
                                     TranscodeVideoUtils.setResolutionAndQuality(selectedCompression);
@@ -488,6 +490,7 @@ public class K4LVideoTrimmer extends FrameLayout {
                                 }
                                 mOnTrimVideoListener.getResult(Uri.parse(destPath));
                             }
+                            mOnTrimVideoListener.onProgress(1.0f);
                         }
                     }
             );
@@ -527,7 +530,7 @@ public class K4LVideoTrimmer extends FrameLayout {
 
         @Override
         public void onMediaProgress(float progress) {
-            mOnTrimVideoListener.onProgress((int) progress);
+            if (progress > 0.13f) mOnTrimVideoListener.onProgress(progress);
         }
 
         @Override

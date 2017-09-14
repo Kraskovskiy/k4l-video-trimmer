@@ -35,5 +35,5 @@ public interface OnTrimVideoListener {
 
     void onError(final String message);
 
-    void onProgress(int progress);
+    void onProgress(float progress);
 }

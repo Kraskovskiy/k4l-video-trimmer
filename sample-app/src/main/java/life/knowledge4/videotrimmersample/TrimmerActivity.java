@@ -104,8 +104,9 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
     }
 
     @Override
-    public void onProgress(int progress) {
-        mProgressDialog.setMessage(getString(R.string.trimming_progress)+" - "+progress+"%");
+    public void onProgress(float progress) {
+        Log.e("TAG", "onProgress: "+ progress);
+        //mProgressDialog.setMessage(getString(R.string.trimming_progress)+" - "+progress+"%");
     }
 
     @Override
