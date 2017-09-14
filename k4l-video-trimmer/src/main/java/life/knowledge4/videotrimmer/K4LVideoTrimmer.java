@@ -527,6 +527,7 @@ public class K4LVideoTrimmer extends FrameLayout {
 
         @Override
         public void onMediaProgress(float progress) {
+            mOnTrimVideoListener.onProgress((int) progress);
         }
 
         @Override

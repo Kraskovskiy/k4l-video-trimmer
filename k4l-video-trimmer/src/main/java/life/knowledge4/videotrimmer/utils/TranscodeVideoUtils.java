@@ -66,45 +66,53 @@ public class TranscodeVideoUtils {
 
     public static void setResolutionAndQuality(int outQuality) {
         if (outQuality == 1) {
-            if (videoHeightIn > videoWidthIn) {
-                videoWidthOut = (videoWidthIn) / (videoHeightIn / 300);
-                videoHeightOut = 300;
-            } else {
-                videoHeightOut = (videoHeightIn) / (videoWidthIn / 300);
-                videoWidthOut = 300;
+            if (videoHeightIn < videoWidthIn) {
+                if (videoHeightIn > 300) {
+                    videoWidthOut = (videoWidthIn) / (videoHeightIn / 300);
+                    videoHeightOut = 300;
+                } else {
+                    videoHeightOut = (videoHeightIn) / (videoWidthIn / 300);
+                    videoWidthOut = 300;
+                }
             }
         }
 
         if (outQuality == 2) {
-            if (videoHeightIn > videoWidthIn) {
-                videoWidthOut = (videoWidthIn) / (videoHeightIn / 360);
-                videoHeightOut = 360;
-            } else {
-                videoHeightOut = (videoHeightIn) / (videoWidthIn / 360);
-                videoWidthOut = 360;
+            if (videoHeightIn < videoWidthIn) {
+                if (videoHeightIn > 360) {
+                    videoWidthOut = (videoWidthIn) / (videoHeightIn / 360);
+                    videoHeightOut = 360;
+                } else {
+                    videoHeightOut = (videoHeightIn) / (videoWidthIn / 360);
+                    videoWidthOut = 360;
+                }
             }
         }
 
         if (outQuality == 3) {
-            if (videoHeightIn > videoWidthIn) {
-                videoWidthOut = (videoWidthIn) / (videoHeightIn / 480);
-                videoHeightOut = 480;
-            } else {
-                videoHeightOut = (videoHeightIn) / (videoWidthIn / 480);
-                videoWidthOut = 480;
+            if (videoHeightIn < videoWidthIn) {
+                if (videoHeightIn > 480) {
+                    videoWidthOut = (videoWidthIn) / (videoHeightIn / 480);
+                    videoHeightOut = 480;
+                } else {
+                    videoHeightOut = (videoHeightIn) / (videoWidthIn / 480);
+                    videoWidthOut = 480;
+                }
             }
         }
 
         if (outQuality == 4) {
-            if (videoHeightIn > videoWidthIn) {
-                videoWidthOut = (videoWidthIn) / (videoHeightIn / 720);
-                videoHeightOut = 720;
-            } else {
-                videoHeightOut = (videoHeightIn) / (videoWidthIn / 720);
-                videoWidthOut = 720;
+            if (videoHeightIn < videoWidthIn) {
+                if (videoHeightIn > 720) {
+                    videoWidthOut = (videoWidthIn) / (videoHeightIn / 720);
+                    videoHeightOut = 720;
+                } else {
+                    videoHeightOut = (videoHeightIn) / (videoWidthIn / 720);
+                    videoWidthOut = 720;
+                }
             }
         }
-       // Log.e("TAG" , "setResolutionAndQuality: " +"videoHeightOut="+videoHeightOut+" videoWidthOut=" +videoWidthOut +" videoBitRateInKBytes="+videoBitRateInKBytes);
+        // Log.e("TAG" , "setResolutionAndQuality: " +"videoHeightOut="+videoHeightOut+" videoWidthOut=" +videoWidthOut +" videoBitRateInKBytes="+videoBitRateInKBytes);
     }
 
 
@@ -137,7 +145,8 @@ public class TranscodeVideoUtils {
             } else {
                 videoWidthIn = videoFormat.getVideoFrameSize().width();
                 videoHeightIn = videoFormat.getVideoFrameSize().height();
-                if (videoFormat.getVideoBitRateInKBytes()>100) videoBitRateInKBytes = videoFormat.getVideoBitRateInKBytes();
+                if (videoFormat.getVideoBitRateInKBytes() > 100)
+                    videoBitRateInKBytes = videoFormat.getVideoBitRateInKBytes();
             }
         } catch (Exception e) {
             // String message = (e.getMessage() != null) ? e.getMessage() : e.toString();

@@ -54,8 +54,8 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
             mVideoTrimmer.setOnTrimVideoListener(this);
             mVideoTrimmer.setOnK4LVideoListener(this);
             //mVideoTrimmer.setDestinationPath(filePath(this));
-            Log.e("TAG", "onCreate: "+ Uri.parse(path).toString() );
-            Log.e("TAG", "onCreate:Final "+filePath(this) );
+          //  Log.e("TAG", "onCreate: "+ Uri.parse(path).toString() );
+          //  Log.e("TAG", "onCreate:Final "+filePath(this) );
             mVideoTrimmer.setVideoURI(Uri.parse(path));
             mVideoTrimmer.setVideoInformationVisibility(true);
             mVideoTrimmer.showControlButton(true);
@@ -101,6 +101,11 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
                 Toast.makeText(TrimmerActivity.this, message, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void onProgress(int progress) {
+        mProgressDialog.setMessage(getString(R.string.trimming_progress)+" - "+progress+"%");
     }
 
     @Override
