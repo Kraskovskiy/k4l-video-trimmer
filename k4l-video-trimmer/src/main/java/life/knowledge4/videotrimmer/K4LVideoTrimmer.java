@@ -490,7 +490,6 @@ public class K4LVideoTrimmer extends FrameLayout {
                                 }
                                 mOnTrimVideoListener.getResult(Uri.parse(destPath));
                             }
-                            mOnTrimVideoListener.onProgress(1.0f);
                         }
                     }
             );
@@ -535,6 +534,7 @@ public class K4LVideoTrimmer extends FrameLayout {
 
         @Override
         public void onMediaDone() {
+            mOnTrimVideoListener.onProgress(1.0f);
             mOnTrimVideoListener.getResult(Uri.parse(getTranscodeDestinationPath()));
         }
 
