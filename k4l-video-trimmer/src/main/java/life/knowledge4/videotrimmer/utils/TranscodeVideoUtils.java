@@ -12,6 +12,7 @@ import org.m4m.domain.MediaCodecInfo;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 
 public class TranscodeVideoUtils {
 
@@ -68,53 +69,81 @@ public class TranscodeVideoUtils {
         if (outQuality == 1) {
             if (videoHeightIn < videoWidthIn) {
                 if (videoHeightIn > 300) {
-                    videoWidthOut = (videoWidthIn) / (videoHeightIn / 300);
+                    videoWidthOut = (int) ((videoWidthIn) / round((videoHeightIn / 300f), 2));
                     videoHeightOut = 300;
                 } else {
-                    videoHeightOut = (videoHeightIn) / (videoWidthIn / 300);
+                    videoHeightOut = (int) ((videoHeightIn) / round((videoWidthIn / 300f), 2));
                     videoWidthOut = 300;
                 }
+            } else if (videoWidthIn > 300) {
+                videoHeightOut = (int) ((videoHeightIn) / round((videoWidthIn / 300f), 2));
+                videoWidthOut = 300;
+            } else {
+                videoWidthOut = (int) ((videoWidthIn) / round((videoHeightIn / 300f), 2));
+                videoHeightOut = 300;
             }
         }
 
         if (outQuality == 2) {
             if (videoHeightIn < videoWidthIn) {
                 if (videoHeightIn > 360) {
-                    videoWidthOut = (videoWidthIn) / (videoHeightIn / 360);
+                    videoWidthOut = (int) ((videoWidthIn) / round((videoHeightIn / 360f), 2));
                     videoHeightOut = 360;
                 } else {
-                    videoHeightOut = (videoHeightIn) / (videoWidthIn / 360);
+                    videoHeightOut = (int) ((videoHeightIn) / round((videoWidthIn / 360f), 2));
                     videoWidthOut = 360;
                 }
+            } else if (videoWidthIn > 360) {
+                videoHeightOut = (int) ((videoHeightIn) / round((videoWidthIn / 360f), 2));
+                videoWidthOut = 360;
+            } else {
+                videoWidthOut = (int) ((videoWidthIn) / round((videoHeightIn / 360f), 2));
+                videoHeightOut = 360;
             }
         }
 
         if (outQuality == 3) {
             if (videoHeightIn < videoWidthIn) {
                 if (videoHeightIn > 480) {
-                    videoWidthOut = (videoWidthIn) / (videoHeightIn / 480);
+                    videoWidthOut = (int) ((videoWidthIn) / round((videoHeightIn / 480f), 2));
                     videoHeightOut = 480;
                 } else {
-                    videoHeightOut = (videoHeightIn) / (videoWidthIn / 480);
+                    videoHeightOut = (int) ((videoHeightIn) / round((videoWidthIn / 480f), 2));
                     videoWidthOut = 480;
                 }
+            } else if (videoWidthIn > 480) {
+                videoHeightOut = (int) ((videoHeightIn) / round((videoWidthIn / 480f), 2));
+                videoWidthOut = 480;
+            } else {
+                videoWidthOut = (int) ((videoWidthIn) / round((videoHeightIn / 480f), 2));
+                videoHeightOut = 480;
             }
         }
 
         if (outQuality == 4) {
             if (videoHeightIn < videoWidthIn) {
                 if (videoHeightIn > 720) {
-                    videoWidthOut = (videoWidthIn) / (videoHeightIn / 720);
+                    videoWidthOut = (int) ((videoWidthIn) / round((videoHeightIn / 720f), 2));
                     videoHeightOut = 720;
                 } else {
-                    videoHeightOut = (videoHeightIn) / (videoWidthIn / 720);
+                    videoHeightOut = (int) ((videoHeightIn) / round((videoWidthIn / 720f), 2));
                     videoWidthOut = 720;
                 }
+            } else if (videoWidthIn > 720) {
+                videoHeightOut = (int) ((videoHeightIn) / round((videoWidthIn / 720f), 2));
+                videoWidthOut = 720;
+            } else {
+                videoWidthOut = (int) ((videoWidthIn) / round((videoHeightIn / 720f), 2));
+                videoHeightOut = 720;
             }
         }
-        // Log.e("TAG" , "setResolutionAndQuality: " +"videoHeightOut="+videoHeightOut+" videoWidthOut=" +videoWidthOut +" videoBitRateInKBytes="+videoBitRateInKBytes);
+        // Log.e("TAG", "setResolutionAndQuality: " + "videoHeightOut=" + videoHeightOut + " videoWidthOut=" + videoWidthOut + " videoBitRateInKBytes=" + videoBitRateInKBytes);
+        // Log.e("TAG", "setResolutionAndQuality:2in " + "videoHeightIn=" + videoHeightIn + " videoWidthIn=" + videoWidthIn);
     }
 
+    public static float round(float d, int decimalPlace) {
+        return BigDecimal.valueOf(d).setScale(decimalPlace, BigDecimal.ROUND_HALF_UP).floatValue();
+    }
 
     public static void getDefaultFileInfo(Context context, Uri mediaUri, String mediaPath) {
         try {

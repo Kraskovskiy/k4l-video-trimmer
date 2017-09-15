@@ -464,6 +464,7 @@ public class K4LVideoTrimmer extends FrameLayout {
                     new BackgroundExecutor.Task("", 0L, "") {
                         @Override
                         public void execute() {
+                            mOnTrimVideoListener.onProgress(0.01f);
                             try {
                                 if (needTrim) {
                                     TrimVideoUtils.startTrim(file, destPath, mStartPosition, mEndPosition, muteVideo, mOnTrimVideoListener);
