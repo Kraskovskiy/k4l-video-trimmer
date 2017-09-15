@@ -54,6 +54,10 @@ public class TranscodeVideoUtils {
 
     protected static final int audioBitRate = 96 * 1024;
 
+    // Long edge length in pixels for standard video formats, in decreasing in order.
+    private static final int[] STANDARD_LONG_EDGE_VIDEO_PX = new int[]{
+            1920, 1600, 1440, 1280, 960, 854, 640, 540, 480, 360, 240};
+
 
     ///////////////////////////////////////////////////////////////////////////
 
@@ -69,17 +73,17 @@ public class TranscodeVideoUtils {
         if (outQuality == 1) {
             if (videoHeightIn < videoWidthIn) {
                 if (videoHeightIn > 300) {
-                    videoWidthOut = (int) ((videoWidthIn) / round((videoHeightIn / 300f), 2));
+                    videoWidthOut = validateSize((int) ((videoWidthIn) / round((videoHeightIn / 300f), 2)));
                     videoHeightOut = 300;
                 } else {
-                    videoHeightOut = (int) ((videoHeightIn) / round((videoWidthIn / 300f), 2));
+                    videoHeightOut = validateSize((int) ((videoHeightIn) / round((videoWidthIn / 300f), 2)));
                     videoWidthOut = 300;
                 }
             } else if (videoWidthIn > 300) {
-                videoHeightOut = (int) ((videoHeightIn) / round((videoWidthIn / 300f), 2));
+                videoHeightOut = validateSize((int) ((videoHeightIn) / round((videoWidthIn / 300f), 2)));
                 videoWidthOut = 300;
             } else {
-                videoWidthOut = (int) ((videoWidthIn) / round((videoHeightIn / 300f), 2));
+                videoWidthOut = validateSize((int) ((videoWidthIn) / round((videoHeightIn / 300f), 2)));
                 videoHeightOut = 300;
             }
         }
@@ -87,17 +91,17 @@ public class TranscodeVideoUtils {
         if (outQuality == 2) {
             if (videoHeightIn < videoWidthIn) {
                 if (videoHeightIn > 360) {
-                    videoWidthOut = (int) ((videoWidthIn) / round((videoHeightIn / 360f), 2));
+                    videoWidthOut = validateSize((int) ((videoWidthIn) / round((videoHeightIn / 360f), 2)));
                     videoHeightOut = 360;
                 } else {
-                    videoHeightOut = (int) ((videoHeightIn) / round((videoWidthIn / 360f), 2));
+                    videoHeightOut = validateSize((int) ((videoHeightIn) / round((videoWidthIn / 360f), 2)));
                     videoWidthOut = 360;
                 }
             } else if (videoWidthIn > 360) {
-                videoHeightOut = (int) ((videoHeightIn) / round((videoWidthIn / 360f), 2));
+                videoHeightOut = validateSize((int) ((videoHeightIn) / round((videoWidthIn / 360f), 2)));
                 videoWidthOut = 360;
             } else {
-                videoWidthOut = (int) ((videoWidthIn) / round((videoHeightIn / 360f), 2));
+                videoWidthOut = validateSize((int) ((videoWidthIn) / round((videoHeightIn / 360f), 2)));
                 videoHeightOut = 360;
             }
         }
@@ -105,17 +109,17 @@ public class TranscodeVideoUtils {
         if (outQuality == 3) {
             if (videoHeightIn < videoWidthIn) {
                 if (videoHeightIn > 480) {
-                    videoWidthOut = (int) ((videoWidthIn) / round((videoHeightIn / 480f), 2));
+                    videoWidthOut = validateSize((int) ((videoWidthIn) / round((videoHeightIn / 480f), 2)));
                     videoHeightOut = 480;
                 } else {
-                    videoHeightOut = (int) ((videoHeightIn) / round((videoWidthIn / 480f), 2));
+                    videoHeightOut = validateSize((int) ((videoHeightIn) / round((videoWidthIn / 480f), 2)));
                     videoWidthOut = 480;
                 }
             } else if (videoWidthIn > 480) {
-                videoHeightOut = (int) ((videoHeightIn) / round((videoWidthIn / 480f), 2));
+                videoHeightOut = validateSize((int) ((videoHeightIn) / round((videoWidthIn / 480f), 2)));
                 videoWidthOut = 480;
             } else {
-                videoWidthOut = (int) ((videoWidthIn) / round((videoHeightIn / 480f), 2));
+                videoWidthOut = validateSize((int) ((videoWidthIn) / round((videoHeightIn / 480f), 2)));
                 videoHeightOut = 480;
             }
         }
@@ -123,26 +127,35 @@ public class TranscodeVideoUtils {
         if (outQuality == 4) {
             if (videoHeightIn < videoWidthIn) {
                 if (videoHeightIn > 720) {
-                    videoWidthOut = (int) ((videoWidthIn) / round((videoHeightIn / 720f), 2));
+                    videoWidthOut = validateSize((int) ((videoWidthIn) / round((videoHeightIn / 720f), 2)));
                     videoHeightOut = 720;
                 } else {
-                    videoHeightOut = (int) ((videoHeightIn) / round((videoWidthIn / 720f), 2));
+                    videoHeightOut = validateSize((int) ((videoHeightIn) / round((videoWidthIn / 720f), 2)));
                     videoWidthOut = 720;
                 }
             } else if (videoWidthIn > 720) {
-                videoHeightOut = (int) ((videoHeightIn) / round((videoWidthIn / 720f), 2));
+                videoHeightOut = validateSize((int) ((videoHeightIn) / round((videoWidthIn / 720f), 2)));
                 videoWidthOut = 720;
             } else {
-                videoWidthOut = (int) ((videoWidthIn) / round((videoHeightIn / 720f), 2));
+                videoWidthOut = validateSize((int) ((videoWidthIn) / round((videoHeightIn / 720f), 2)));
                 videoHeightOut = 720;
             }
         }
-        // Log.e("TAG", "setResolutionAndQuality: " + "videoHeightOut=" + videoHeightOut + " videoWidthOut=" + videoWidthOut + " videoBitRateInKBytes=" + videoBitRateInKBytes);
-        // Log.e("TAG", "setResolutionAndQuality:2in " + "videoHeightIn=" + videoHeightIn + " videoWidthIn=" + videoWidthIn);
+        //Log.e("TAG", "setResolutionAndQuality: " + "videoHeightOut=" + videoHeightOut + " videoWidthOut=" + videoWidthOut + " videoBitRateInKBytes=" + videoBitRateInKBytes);
+        //Log.e("TAG", "setResolutionAndQuality:2in " + "videoHeightIn=" + videoHeightIn + " videoWidthIn=" + videoWidthIn);
     }
 
     public static float round(float d, int decimalPlace) {
-        return BigDecimal.valueOf(d).setScale(decimalPlace, BigDecimal.ROUND_HALF_UP).floatValue();
+        return BigDecimal.valueOf(d).setScale(decimalPlace, BigDecimal.ROUND_HALF_DOWN).floatValue();
+    }
+
+    public static int validateSize(int size) {
+        for (int i = 0; i < STANDARD_LONG_EDGE_VIDEO_PX.length; i++) {
+            if (STANDARD_LONG_EDGE_VIDEO_PX[i] < size && i != 0) {
+                return STANDARD_LONG_EDGE_VIDEO_PX[i - 1];
+            }
+        }
+        return size;
     }
 
     public static void getDefaultFileInfo(Context context, Uri mediaUri, String mediaPath) {
@@ -237,10 +250,13 @@ public class TranscodeVideoUtils {
         } catch (Exception ignore) {
             progressListener.onError(ignore);
         }
+        stopTranscode();
     }
 
     public static void stopTranscode() {
-        mediaComposer.stop();
+        if (mediaComposer != null) {
+            mediaComposer.stop();
+        }
     }
 
     private static void reportTranscodeDone() {

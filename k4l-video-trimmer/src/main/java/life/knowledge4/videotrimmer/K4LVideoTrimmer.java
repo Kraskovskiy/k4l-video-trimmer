@@ -595,6 +595,7 @@ public class K4LVideoTrimmer extends FrameLayout {
         if (mOnTrimVideoListener != null) {
             mOnTrimVideoListener.cancelAction();
         }
+        TranscodeVideoUtils.stopTranscode();
     }
 
     private String getDestinationPath() {
