@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.squareup.leakcanary.LeakCanary;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,6 +36,14 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(getApplication());
+        // Normal app init code...
+
         setContentView(R.layout.activity_trimmer);
 
         Intent extraIntent = getIntent();
@@ -81,6 +91,10 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
       /*  Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         intent.setDataAndType(uri, "video/mp4");
         startActivity(intent);*/
+
+       // mVideoTrimmer.setOnTrimVideoListener(null);
+       // mVideoTrimmer.setOnK4LVideoListener(null);
+        mVideoTrimmer.destroy();
         finish();
     }
 

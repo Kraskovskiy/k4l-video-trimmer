@@ -145,9 +145,9 @@ public class K4LVideoTrimmer extends FrameLayout {
 
         mContext = context.getApplicationContext();
 
-        LayoutInflater.from(context).inflate(R.layout.view_time_line_v2, this, true);
-
         AndroidUtilities.checkDisplaySize(context);
+
+        LayoutInflater.from(context).inflate(R.layout.view_time_line_v2, this, true);
 
         mHolderTopView = ((SeekBar) findViewById(R.id.handlerTop));
         mVideoProgressIndicator = ((ProgressBarView) findViewById(R.id.timeVideoView));
