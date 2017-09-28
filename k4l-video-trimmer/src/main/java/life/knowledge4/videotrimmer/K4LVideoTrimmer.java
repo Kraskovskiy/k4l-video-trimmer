@@ -135,7 +135,7 @@ public class K4LVideoTrimmer extends FrameLayout {
 
     public K4LVideoTrimmer(@NonNull Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context);
+        init(context.getApplicationContext());
     }
 
     private void init(Context context) {
@@ -894,6 +894,9 @@ public class K4LVideoTrimmer extends FrameLayout {
     public void destroy() {
         BackgroundExecutor.cancelAll("", true);
         UiThreadExecutor.cancelAll("");
+        mOnTrimVideoListener = null;
+        mOnK4LVideoListener = null;
+        progressListener = null;
         //videoTimelineView.clearFrames();
     }
 
