@@ -30,6 +30,7 @@ dependencies {
     compile 'com.googlecode.mp4parser:isoparser:1.1.22'
     compile 'com.devbrackets.android:exomedia:4.0.2'
     compile 'com.github.indexOS.media-for-mobile:android:master-SNAPSHOT'
+    compile 'org.greenrobot:eventbus:3.0.0'
     testCompile 'junit:junit:4.12'
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
     androidTestCompile 'com.android.support.test:runner:0.5'

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
+import org.greenrobot.eventbus.EventBus;
+import org.m4m.IProgressListener;
 import org.m4m.android.AndroidMediaObjectFactory;
 import org.m4m.android.AudioFormatAndroid;
 import org.m4m.android.VideoFormatAndroid;
@@ -13,6 +15,10 @@ import org.m4m.domain.MediaCodecInfo;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+
+import life.knowledge4.videotrimmer.events.MediaDoneEvent;
+import life.knowledge4.videotrimmer.events.MediaErrorEvent;
+import life.knowledge4.videotrimmer.events.MediaProgressEvent;
 
 public class TranscodeVideoUtils {
 
@@ -244,11 +250,41 @@ public class TranscodeVideoUtils {
         mediaComposer.start();
     }
 
-    public static void startTranscode(Context context, org.m4m.IProgressListener progressListener) {
+    public static void startTranscode(Context context) {
         try {
-            transcode(context, progressListener);
+            transcode(context, new IProgressListener() {
+                @Override
+                public void onMediaStart() {
+
+                }
+
+                @Override
+                public void onMediaProgress(float v) {
+                    EventBus.getDefault().post(new MediaProgressEvent(v));
+                }
+
+                @Override
+                public void onMediaDone() {
+                    EventBus.getDefault().post(new MediaDoneEvent());
+                }
+
+                @Override
+                public void onMediaPause() {
+
+                }
+
+                @Override
+                public void onMediaStop() {
+
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    EventBus.getDefault().post(new MediaErrorEvent());
+                }
+            });
         } catch (Exception ignore) {
-            progressListener.onError(ignore);
+            EventBus.getDefault().post(new MediaErrorEvent());
         }
         stopTranscode();
     }

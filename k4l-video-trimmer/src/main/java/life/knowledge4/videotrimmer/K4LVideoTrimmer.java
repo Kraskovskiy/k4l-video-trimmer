@@ -49,6 +49,10 @@ import com.devbrackets.android.exomedia.listener.OnErrorListener;
 import com.devbrackets.android.exomedia.listener.OnPreparedListener;
 import com.devbrackets.android.exomedia.ui.widget.VideoView;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -62,6 +66,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import life.knowledge4.videotrimmer.events.MediaDoneEvent;
+import life.knowledge4.videotrimmer.events.MediaErrorEvent;
+import life.knowledge4.videotrimmer.events.MediaProgressEvent;
 import life.knowledge4.videotrimmer.interfaces.OnK4LVideoListener;
 import life.knowledge4.videotrimmer.interfaces.OnProgressVideoListener;
 import life.knowledge4.videotrimmer.interfaces.OnQualityChooseListener;
@@ -143,6 +150,7 @@ public class K4LVideoTrimmer extends FrameLayout {
             return;
         }
 
+        EventBus.getDefault().register(this);
         mContext = context.getApplicationContext();
 
         AndroidUtilities.checkDisplaySize(context);
@@ -477,7 +485,7 @@ public class K4LVideoTrimmer extends FrameLayout {
                                 if (needCompression) {
                                     TranscodeVideoUtils.getDefaultFileInfo(mContext, needTrim && (new File(destPath).length() > 30000) ? Uri.parse(destPath) : mSrc, getTranscodeDestinationPath());
                                     TranscodeVideoUtils.setResolutionAndQuality(selectedCompression);
-                                    TranscodeVideoUtils.startTranscode(mContext, progressListener);
+                                    TranscodeVideoUtils.startTranscode(mContext);
                                 } else {
                                     if (new File(destPath).length() > 30000) {
                                         mOnTrimVideoListener.getResult(Uri.parse(destPath));
@@ -524,6 +532,22 @@ public class K4LVideoTrimmer extends FrameLayout {
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMediaDoneEvent(MediaDoneEvent event) {
+        mOnTrimVideoListener.onProgress(1.0f);
+        mOnTrimVideoListener.getResult(Uri.parse(getTranscodeDestinationPath()));
+    };
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMediaErrorEvent(MediaErrorEvent event) {
+        exceptionHandler();
+    };
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMediaProgressEvent(MediaProgressEvent event) {
+        if (event.getProgress() > 0.13f) mOnTrimVideoListener.onProgress(event.getProgress());
+    };
+/*
 
     public org.m4m.IProgressListener progressListener = new org.m4m.IProgressListener() {
         @Override
@@ -553,7 +577,7 @@ public class K4LVideoTrimmer extends FrameLayout {
         public void onError(Exception exception) {
             exceptionHandler();
         }
-    };
+    };*/
 
     private void exceptionHandler() {
         if (new File(getDestinationPath()).length() > 30000) {
@@ -896,7 +920,8 @@ public class K4LVideoTrimmer extends FrameLayout {
         UiThreadExecutor.cancelAll("");
         mOnTrimVideoListener = null;
         mOnK4LVideoListener = null;
-        progressListener = null;
+        //progressListener = null;
+        EventBus.getDefault().unregister(this);
         //videoTimelineView.clearFrames();
     }
 

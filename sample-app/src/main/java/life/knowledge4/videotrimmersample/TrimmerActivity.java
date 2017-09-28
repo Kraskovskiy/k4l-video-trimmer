@@ -106,6 +106,12 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mVideoTrimmer.destroy();
+    }
+
+    @Override
     public void onError(final String message) {
         mProgressDialog.cancel();
 
