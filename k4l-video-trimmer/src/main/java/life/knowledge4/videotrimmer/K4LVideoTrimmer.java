@@ -431,8 +431,10 @@ public class K4LVideoTrimmer extends FrameLayout {
         }
 
         //notify that video trimming started
-        if (mOnTrimVideoListener != null)
+        if (mOnTrimVideoListener != null) {
             mOnTrimVideoListener.onTrimStarted();
+            mOnTrimVideoListener.onProgress(0.0f);
+        }
 
         if (!needTrim && !needCompression) {
             if (mOnTrimVideoListener != null)
