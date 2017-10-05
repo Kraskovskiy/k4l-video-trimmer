@@ -151,6 +151,83 @@ public class TranscodeVideoUtils {
         //Log.e("TAG", "setResolutionAndQuality:2in " + "videoHeightIn=" + videoHeightIn + " videoWidthIn=" + videoWidthIn);
     }
 
+    public static float getResolutionX(int outQuality, int videoHeightIn, int videoWidthIn) {
+        int videoWidthOutCalc = 720;
+        int videoHeightOutCalc = 720;
+        if (outQuality == 1) {
+            if (videoHeightIn < videoWidthIn) {
+                if (videoHeightIn > 300) {
+                    videoWidthOutCalc = validateSize((int) ((videoWidthIn) / round((videoHeightIn / 300f), 2)));
+                    videoHeightOutCalc = 300;
+                } else {
+                    videoHeightOutCalc = validateSize((int) ((videoHeightIn) / round((videoWidthIn / 300f), 2)));
+                    videoWidthOutCalc = 300;
+                }
+            } else if (videoWidthIn > 300) {
+                videoHeightOutCalc = validateSize((int) ((videoHeightIn) / round((videoWidthIn / 300f), 2)));
+                videoWidthOutCalc = 300;
+            } else {
+                videoWidthOutCalc = validateSize((int) ((videoWidthIn) / round((videoHeightIn / 300f), 2)));
+                videoHeightOutCalc = 300;
+            }
+        }
+
+        if (outQuality == 2) {
+            if (videoHeightIn < videoWidthIn) {
+                if (videoHeightIn > 360) {
+                    videoWidthOutCalc = validateSize((int) ((videoWidthIn) / round((videoHeightIn / 360f), 2)));
+                    videoHeightOutCalc = 360;
+                } else {
+                    videoHeightOutCalc = validateSize((int) ((videoHeightIn) / round((videoWidthIn / 360f), 2)));
+                    videoWidthOutCalc = 360;
+                }
+            } else if (videoWidthIn > 360) {
+                videoHeightOutCalc = validateSize((int) ((videoHeightIn) / round((videoWidthIn / 360f), 2)));
+                videoWidthOutCalc = 360;
+            } else {
+                videoWidthOutCalc = validateSize((int) ((videoWidthIn) / round((videoHeightIn / 360f), 2)));
+                videoHeightOutCalc = 360;
+            }
+        }
+
+        if (outQuality == 3) {
+            if (videoHeightIn < videoWidthIn) {
+                if (videoHeightIn > 480) {
+                    videoWidthOutCalc = validateSize((int) ((videoWidthIn) / round((videoHeightIn / 480f), 2)));
+                    videoHeightOutCalc = 480;
+                } else {
+                    videoHeightOutCalc = validateSize((int) ((videoHeightIn) / round((videoWidthIn / 480f), 2)));
+                    videoWidthOutCalc = 480;
+                }
+            } else if (videoWidthIn > 480) {
+                videoHeightOutCalc = validateSize((int) ((videoHeightIn) / round((videoWidthIn / 480f), 2)));
+                videoWidthOutCalc = 480;
+            } else {
+                videoWidthOutCalc = validateSize((int) ((videoWidthIn) / round((videoHeightIn / 480f), 2)));
+                videoHeightOutCalc = 480;
+            }
+        }
+
+        if (outQuality == 4) {
+            if (videoHeightIn < videoWidthIn) {
+                if (videoHeightIn > 720) {
+                    videoWidthOutCalc = validateSize((int) ((videoWidthIn) / round((videoHeightIn / 720f), 2)));
+                    videoHeightOutCalc = 720;
+                } else {
+                    videoHeightOutCalc = validateSize((int) ((videoHeightIn) / round((videoWidthIn / 720f), 2)));
+                    videoWidthOutCalc = 720;
+                }
+            } else if (videoWidthIn > 720) {
+                videoHeightOutCalc = validateSize((int) ((videoHeightIn) / round((videoWidthIn / 720f), 2)));
+                videoWidthOutCalc = 720;
+            } else {
+                videoWidthOutCalc = validateSize((int) ((videoWidthIn) / round((videoHeightIn / 720f), 2)));
+                videoHeightOutCalc = 720;
+            }
+        }
+        return videoWidthOutCalc * videoHeightOutCalc;
+    }
+
     public static float round(float d, int decimalPlace) {
         return BigDecimal.valueOf(d).setScale(decimalPlace, BigDecimal.ROUND_HALF_DOWN).floatValue();
     }

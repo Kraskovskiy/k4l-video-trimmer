@@ -319,10 +319,17 @@ public class K4LVideoTrimmer extends FrameLayout {
     }
 
     private void onQualityChoseChanges(int selectedCompression) {
-        qualitySize = (float) selectedCompression / compressionsCount;
+        qualitySize = calcQualitySize(selectedCompression);
         this.selectedCompression = selectedCompression;
         setDefaultVideoResolution(selectedCompression);
         setNewSize();
+    }
+
+    private float calcQualitySize(int selectedCompression) {
+        if (defaultVideoWidth * defaultVideoHeight > 0) {
+            return TranscodeVideoUtils.getResolutionX(selectedCompression, defaultVideoHeight, defaultVideoWidth) / (defaultVideoWidth * defaultVideoHeight);
+        }
+        return 1;
     }
 
     private void setUpMargins() {
@@ -364,13 +371,13 @@ public class K4LVideoTrimmer extends FrameLayout {
     }
 
     private void getResolutionType() {
-        if (defaultVideoWidth >= 1080 || defaultVideoHeight >= 1080) {
+        if (defaultVideoWidth >= 1920 || defaultVideoHeight >= 1920) {
             compressionsCount = 5;
-        } else if (defaultVideoWidth >= 720 || defaultVideoHeight >= 720) {
+        } else if (defaultVideoWidth >= 1080 || defaultVideoHeight >= 1080) {
             compressionsCount = 4;
-        } else if (defaultVideoWidth >= 480 || defaultVideoHeight >= 480) {
+        } else if (defaultVideoWidth >= 720 || defaultVideoHeight >= 720) {
             compressionsCount = 3;
-        } else if (defaultVideoWidth >= 360 || defaultVideoHeight >= 360) {
+        } else if (defaultVideoWidth >= 480 || defaultVideoHeight >= 480) {
             compressionsCount = 2;
         } else {
             compressionsCount = 1;
@@ -536,17 +543,23 @@ public class K4LVideoTrimmer extends FrameLayout {
     public void onMediaDoneEvent(MediaDoneEvent event) {
         mOnTrimVideoListener.onProgress(1.0f);
         mOnTrimVideoListener.getResult(Uri.parse(getTranscodeDestinationPath()));
-    };
+    }
+
+    ;
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMediaErrorEvent(MediaErrorEvent event) {
         exceptionHandler();
-    };
+    }
+
+    ;
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMediaProgressEvent(MediaProgressEvent event) {
         if (event.getProgress() > 0.13f) mOnTrimVideoListener.onProgress(event.getProgress());
-    };
+    }
+
+    ;
 /*
 
     public org.m4m.IProgressListener progressListener = new org.m4m.IProgressListener() {
@@ -777,7 +790,11 @@ public class K4LVideoTrimmer extends FrameLayout {
             newFileSizeRatio += ((1 - newFileSizeRatio) * 0.24f);
         }
         if (selectedCompression != compressionsCount && selectedCompression != -1) {
-            newFileSizeRatio *= (qualitySize * 0.39);
+            if (compressionsCount > 3) {
+                newFileSizeRatio *= (qualitySize * 0.285);
+            } else {
+                newFileSizeRatio *= (qualitySize * 0.85);
+            }
         }
         return newFileSizeRatio;
     }
