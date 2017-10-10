@@ -362,7 +362,7 @@ public class K4LVideoTrimmer extends FrameLayout {
         }
     }
 
-    private void getVideoResolution() {
+    private void getVideoResolution() throws NumberFormatException  {
         MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
         mediaMetadataRetriever.setDataSource(getContext(), mSrc);
         defaultVideoWidth = Integer.valueOf(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
@@ -708,7 +708,16 @@ public class K4LVideoTrimmer extends FrameLayout {
         if (mOnK4LVideoListener != null) {
             mOnK4LVideoListener.onVideoPrepared();
         }
-        getVideoResolution();
+        try {
+            getVideoResolution();
+        } catch (NumberFormatException e) {
+            try {
+                copyFile(new File(mSrc.getPath()), new File(getDestinationPath()));
+            } catch (IOException ignore) {
+            }
+            mOnTrimVideoListener.getResult(Uri.parse(getDestinationPath()));
+            return;
+        }
         setDefaultVideoResolution(compressionsCount);
         qualityChooseView.setOriginalCompression(compressionsCount);
     }
