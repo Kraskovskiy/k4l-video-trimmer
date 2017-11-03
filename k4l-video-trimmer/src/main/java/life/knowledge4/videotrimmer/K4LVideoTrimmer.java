@@ -656,7 +656,7 @@ public class K4LVideoTrimmer extends FrameLayout {
             return folder.getPath() + File.separator + fileName;
         } else {
             File originalFile = new File(mFinalPath);
-            String name = getResolutionName() + originalFile.getName();
+            String name = originalFile.getName();
             File transcodeFile = new File(mFinalPath.substring(0, mFinalPath.indexOf(originalFile.getName())) + name);
             return transcodeFile.getPath();
         }
