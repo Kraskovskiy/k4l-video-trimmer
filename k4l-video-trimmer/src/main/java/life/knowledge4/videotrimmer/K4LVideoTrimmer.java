@@ -362,7 +362,7 @@ public class K4LVideoTrimmer extends FrameLayout {
         }
     }
 
-    private void getVideoResolution() throws NumberFormatException  {
+    private void getVideoResolution() throws NumberFormatException {
         MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
         mediaMetadataRetriever.setDataSource(getContext(), mSrc);
         defaultVideoWidth = Integer.valueOf(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
@@ -539,10 +539,24 @@ public class K4LVideoTrimmer extends FrameLayout {
         }
     }
 
+    public static String removeSuffixFile(File sourceFile, File destFile) throws IOException {
+        String name = sourceFile.getName();
+        sourceFile.delete();
+        if (sourceFile.exists()) {
+            sourceFile.getCanonicalFile().delete();
+        }
+        destFile.renameTo(sourceFile);
+        return destFile.getPath();
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMediaDoneEvent(MediaDoneEvent event) {
         mOnTrimVideoListener.onProgress(1.0f);
-        mOnTrimVideoListener.getResult(Uri.parse(getTranscodeDestinationPath()));
+        try {
+            mOnTrimVideoListener.getResult(Uri.parse(removeSuffixFile(new File(getDestinationPath()), new File(getTranscodeDestinationPath()))));
+        } catch (IOException ignore) {
+            mOnTrimVideoListener.getResult(Uri.parse(getDestinationPath()));
+        }
     }
 
     ;
@@ -656,7 +670,7 @@ public class K4LVideoTrimmer extends FrameLayout {
             return folder.getPath() + File.separator + fileName;
         } else {
             File originalFile = new File(mFinalPath);
-            String name = originalFile.getName();
+            String name = getResolutionName() + originalFile.getName();
             File transcodeFile = new File(mFinalPath.substring(0, mFinalPath.indexOf(originalFile.getName())) + name);
             return transcodeFile.getPath();
         }

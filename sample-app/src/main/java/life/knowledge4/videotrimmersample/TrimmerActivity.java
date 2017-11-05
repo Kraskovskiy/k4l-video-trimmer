@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
@@ -28,7 +29,7 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
     private String filePath(Context context){
         final String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         final String fileName = "MP4_" + timeStamp + ".mp4";
-        File directory = context.getCacheDir();
+        File directory = Environment.getExternalStorageDirectory();
         File result = new File(directory, fileName);
         return result.getPath();
     }
@@ -63,7 +64,7 @@ public class TrimmerActivity extends AppCompatActivity implements OnTrimVideoLis
             mVideoTrimmer.setMaxDuration(960);
             mVideoTrimmer.setOnTrimVideoListener(this);
             mVideoTrimmer.setOnK4LVideoListener(this);
-            //mVideoTrimmer.setDestinationPath(filePath(this));
+            mVideoTrimmer.setDestinationPath(filePath(this));
           //  Log.e("TAG", "onCreate: "+ Uri.parse(path).toString() );
           //  Log.e("TAG", "onCreate:Final "+filePath(this) );
             mVideoTrimmer.setVideoURI(Uri.parse(path));
