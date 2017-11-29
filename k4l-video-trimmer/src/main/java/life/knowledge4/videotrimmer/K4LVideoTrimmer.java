@@ -724,7 +724,7 @@ public class K4LVideoTrimmer extends FrameLayout {
         }
         try {
             getVideoResolution();
-        } catch (NumberFormatException e) {
+        } catch (IllegalArgumentException e) {
             try {
                 copyFile(new File(mSrc.getPath()), new File(getDestinationPath()));
             } catch (IOException ignore) {
