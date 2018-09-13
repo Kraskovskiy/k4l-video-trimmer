@@ -93,6 +93,8 @@ public class K4LVideoTrimmer extends FrameLayout {
     private static final String TAG = K4LVideoTrimmer.class.getSimpleName();
     private static final int MIN_TIME_FRAME = 200;
     private static final int SHOW_PROGRESS = 2;
+    private static final int MAX_FILE_SIZE = 1012;
+    private static final int MAX_FILE_SIZE_BEFORE_DECODE = 1512;
 
     private SeekBar mHolderTopView;
     private RangeSeekBarView mRangeSeekBarView;
@@ -473,10 +475,6 @@ public class K4LVideoTrimmer extends FrameLayout {
                 }
             }
 
-          /*  //notify that video trimming started
-            if (mOnTrimVideoListener != null)
-                mOnTrimVideoListener.onTrimStarted();*/
-
             BackgroundExecutor.execute(
                     new BackgroundExecutor.Task("", 0L, "") {
                         @Override
@@ -559,52 +557,15 @@ public class K4LVideoTrimmer extends FrameLayout {
         }
     }
 
-    ;
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMediaErrorEvent(MediaErrorEvent event) {
         exceptionHandler();
     }
 
-    ;
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMediaProgressEvent(MediaProgressEvent event) {
         if (event.getProgress() > 0.13f) mOnTrimVideoListener.onProgress(event.getProgress());
     }
-
-    ;
-/*
-
-    public org.m4m.IProgressListener progressListener = new org.m4m.IProgressListener() {
-        @Override
-        public void onMediaStart() {
-        }
-
-        @Override
-        public void onMediaProgress(float progress) {
-            if (progress > 0.13f) mOnTrimVideoListener.onProgress(progress);
-        }
-
-        @Override
-        public void onMediaDone() {
-            mOnTrimVideoListener.onProgress(1.0f);
-            mOnTrimVideoListener.getResult(Uri.parse(getTranscodeDestinationPath()));
-        }
-
-        @Override
-        public void onMediaPause() {
-        }
-
-        @Override
-        public void onMediaStop() {
-        }
-
-        @Override
-        public void onError(Exception exception) {
-            exceptionHandler();
-        }
-    };*/
 
     private void exceptionHandler() {
         if (new File(getDestinationPath()).length() > 30000) {
@@ -657,7 +618,6 @@ public class K4LVideoTrimmer extends FrameLayout {
             final String fileName = "MP4_" + timeStamp + ".mp4";
             File folder = Environment.getExternalStorageDirectory();
             mFinalPath = folder.getPath() + File.separator + fileName;
-            //Log.d(TAG, "Using default path " + mFinalPath);
         }
         return mFinalPath;
     }
@@ -772,7 +732,7 @@ public class K4LVideoTrimmer extends FrameLayout {
 
         if (fileSizeInKB > 1000) {
             double fileSizeInMB = (float) fileSizeInKB / 1024f;
-            if (fileSizeInMB < 100) {
+            if (fileSizeInMB < MAX_FILE_SIZE) {
                 mTextSize.setText(String.format("~%s %s", new DecimalFormat("##.##").format(fileSizeInMB), getContext().getString(R.string.megabyte)));
             } else {
                 mTextSize.setText(String.format("%s%s", String.format("~%s %s! ", new DecimalFormat("##.##").format(fileSizeInMB), getContext().getString(R.string.megabyte)), getContext().getString(R.string.size_file_overflow)));
@@ -789,13 +749,13 @@ public class K4LVideoTrimmer extends FrameLayout {
         if (fileSizeInKB > 1000) {
             double fileSizeInMB = (float) fileSizeInKB / 1024f;
             double fileSizeInMBAfterDecode = (float) fileSizeInKBAfterDecode / 1024f;
-            if (fileSizeInMB < 100) {
+            if (fileSizeInMB < MAX_FILE_SIZE) {
                 return false;
             } else {
-                if (fileSizeInMB < 200 && fileSizeInMBAfterDecode < 100) {
+                if (fileSizeInMB < MAX_FILE_SIZE_BEFORE_DECODE && fileSizeInMBAfterDecode < MAX_FILE_SIZE) {
                     return false;
                 }
-                if (fileSizeInMB >= 200) {
+                if (fileSizeInMB >= MAX_FILE_SIZE_BEFORE_DECODE) {
                     mTextSize.setText(String.format("%s%s", String.format("~%s %s! ", new DecimalFormat("##.##").format(fileSizeInMB),
                             getContext().getString(R.string.megabyte)), getContext().getString(R.string.size_file_overflow_original)));
                 }
@@ -899,7 +859,7 @@ public class K4LVideoTrimmer extends FrameLayout {
         long fileSizeInKB = (mOriginSizeFile / 1024);
         if (fileSizeInKB > 1000) {
             double fileSizeInMB = (float) fileSizeInKB / 1024f;
-            if (fileSizeInMB > 200) {
+            if (fileSizeInMB > MAX_FILE_SIZE_BEFORE_DECODE) {
                 return true;
             }
         }
@@ -960,9 +920,7 @@ public class K4LVideoTrimmer extends FrameLayout {
         UiThreadExecutor.cancelAll("");
         mOnTrimVideoListener = null;
         mOnK4LVideoListener = null;
-        //progressListener = null;
         EventBus.getDefault().unregister(this);
-        //videoTimelineView.clearFrames();
     }
 
     /**
@@ -993,12 +951,12 @@ public class K4LVideoTrimmer extends FrameLayout {
 
             if (fileSizeInKB > 1000) {
                 long fileSizeInMB = fileSizeInKB / 1024;
-                if (fileSizeInMB < 100) {
+                if (fileSizeInMB < MAX_FILE_SIZE) {
                     mTextSize.setText(String.format("~%s %s", new DecimalFormat("##.##").format(fileSizeInMB), getContext().getString(R.string.megabyte)));
                 } else {
                     mTextSize.setText(String.format("%s%s", String.format("~%s %s! ", new DecimalFormat("##.##").format(fileSizeInMB), getContext().getString(R.string.megabyte)), getContext().getString(R.string.size_file_overflow)));
                 }
-                if (fileSizeInMB > 200) {
+                if (fileSizeInMB > MAX_FILE_SIZE_BEFORE_DECODE) {
                     Toast.makeText(mContext, R.string.size_file_overflow_original, Toast.LENGTH_SHORT).show();
                     if (mOnTrimVideoListener != null) {
                         mOnTrimVideoListener.cancelAction();
