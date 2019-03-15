@@ -870,6 +870,18 @@ public class K4LVideoTrimmer extends FrameLayout {
         mControlWrapper.setVisibility(show ? VISIBLE : GONE);
     }
 
+    public void setCompressItemVisibility(int visibility) {
+        compressItem.setVisibility(visibility);
+    }
+
+    public void disableCompressItem() {
+        compressItem.setOnClickListener(null);
+    }
+
+    public void setCompressItemAlpha(float alpha) {
+        compressItem.setAlpha(alpha);
+    }
+
     /**
      * Set video information visibility.
      * For now this is for debugging
