@@ -488,7 +488,18 @@ public class K4LVideoTrimmer extends FrameLayout {
                                 mOnTrimVideoListener.onProgress(0.13f);
 
                                 if (needCompression) {
-                                    TranscodeVideoUtils.getDefaultFileInfo(mContext, needTrim && (new File(destPath).length() > 30000) ? Uri.parse(destPath) : mSrc, getTranscodeDestinationPath());
+                                    File destFile = new File(destPath);
+                                    long length = destFile.length();
+
+                                    Uri mediaUri;
+                                    if (needTrim && length > 30000) {
+                                        mediaUri = Uri.fromFile(destFile);
+                                    } else {
+                                        mediaUri = mSrc;
+                                    }
+                                    String destPath = getTranscodeDestinationPath();
+
+                                    TranscodeVideoUtils.getDefaultFileInfo(mContext, mediaUri, destPath);
                                     TranscodeVideoUtils.setResolutionAndQuality(selectedCompression);
                                     TranscodeVideoUtils.startTranscode(mContext);
                                 } else {
@@ -537,21 +548,22 @@ public class K4LVideoTrimmer extends FrameLayout {
         }
     }
 
-    public static String removeSuffixFile(File sourceFile, File destFile) throws IOException {
-        String name = sourceFile.getName();
+    public static File removeSuffixFile(File sourceFile, File destFile) throws IOException {
         sourceFile.delete();
         if (sourceFile.exists()) {
             sourceFile.getCanonicalFile().delete();
         }
         destFile.renameTo(sourceFile);
-        return destFile.getPath();
+        return sourceFile;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMediaDoneEvent(MediaDoneEvent event) {
         mOnTrimVideoListener.onProgress(1.0f);
         try {
-            mOnTrimVideoListener.getResult(Uri.parse(removeSuffixFile(new File(getDestinationPath()), new File(getTranscodeDestinationPath()))));
+            File file = removeSuffixFile(new File(getDestinationPath()), new File(getTranscodeDestinationPath()));
+            Uri uri = Uri.fromFile(file);
+            mOnTrimVideoListener.getResult(uri);
         } catch (IOException ignore) {
             mOnTrimVideoListener.getResult(Uri.parse(getDestinationPath()));
         }

@@ -296,7 +296,9 @@ public class TranscodeVideoUtils {
     }
 
     protected static void configureAudioEncoder(org.m4m.MediaComposer mediaComposer) {
-
+        if (audioFormat == null) {
+            return;
+        }
         /**
          * TODO: Audio resampling is unsupported by current m4m release
          * Output sample rate and channel count are the same as for input.
