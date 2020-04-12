@@ -2,12 +2,16 @@ apply plugin: 'com.android.library'
 apply from: '../mavenpush.gradle'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 28
+
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
 
     defaultConfig {
         minSdkVersion 18
-        targetSdkVersion 22
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -25,14 +29,14 @@ repositories{
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.googlecode.mp4parser:isoparser:1.1.22'
-    compile 'com.devbrackets.android:exomedia:4.0.2'
-    compile 'com.github.indexOS.media-for-mobile:android:master-SNAPSHOT'
-    compile 'org.greenrobot:eventbus:3.0.0'
-    testCompile 'junit:junit:4.12'
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
-    androidTestCompile 'com.android.support.test:runner:0.5'
-    androidTestCompile 'com.android.support:support-annotations:25.3.1'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.googlecode.mp4parser:isoparser:1.1.22'
+    implementation 'com.devbrackets.android:exomedia:4.3.0'
+    implementation 'com.github.indexOS.media-for-mobile:android:master-SNAPSHOT'
+    implementation 'org.greenrobot:eventbus:3.1.1'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support:support-annotations:28.0.0'
 }
