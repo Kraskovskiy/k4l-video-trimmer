@@ -23,9 +23,7 @@
  */
 package life.knowledge4.videotrimmer.utils;
 
-import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.util.Log;
+import androidx.annotation.NonNull;
 
 import com.coremedia.iso.boxes.Container;
 import com.googlecode.mp4parser.FileDataSourceViaHeapImpl;
@@ -40,13 +38,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Formatter;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import life.knowledge4.videotrimmer.interfaces.OnTrimVideoListener;
 

@@ -1,10 +1,9 @@
 package life.knowledge4.videotrimmer.view;
 
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -13,7 +12,6 @@ import android.graphics.Rect;
 import android.media.MediaMetadataRetriever;
 import android.os.AsyncTask;
 import android.view.MotionEvent;
-import android.view.View;
 
 
 import java.util.ArrayList;
