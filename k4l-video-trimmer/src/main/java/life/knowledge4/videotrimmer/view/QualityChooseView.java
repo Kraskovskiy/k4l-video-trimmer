@@ -64,17 +64,17 @@ public class QualityChooseView extends View {
         textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setTextSize(AndroidUtilities.dp(12));
         textPaint.setColor(0xffcdcdcd);
-        this.compressionsCount = 3;
-        this.selectedCompression = 3;
+        this.compressionsCount = 2;
+        this.selectedCompression = 2;
     }
 
     private void setOriginalHeight() {
-        if (compressionsCount == 2) {
+        if (compressionsCount == 1) {
+            originalHeight = "480";
+        } else if (compressionsCount == 2) {
             originalHeight = "720";
         } else if (compressionsCount == 3) {
             originalHeight = "1080";
-        } else {
-            originalHeight = "480";
         }
     }
 
@@ -170,10 +170,8 @@ public class QualityChooseView extends View {
                 text = originalHeight + "p";
             } else if (a == 0) {
                 text = "480p";
-            } else if (a == 1){
-                text = "720p";
             } else {
-                text = "1080p";
+                text = "720p";
             }
 
             float width = textPaint.measureText(text);

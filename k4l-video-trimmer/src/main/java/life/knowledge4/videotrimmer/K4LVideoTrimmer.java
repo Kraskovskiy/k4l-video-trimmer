@@ -380,7 +380,7 @@ public class K4LVideoTrimmer extends FrameLayout {
         } else if (defaultVideoWidth >= 720 || defaultVideoHeight >= 720) {
             compressionsCount = 1;
         } else {
-            compressionsCount = 1;
+            compressionsCount = 0;
         }
     }
 
