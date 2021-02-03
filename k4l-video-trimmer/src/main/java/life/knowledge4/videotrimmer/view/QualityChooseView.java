@@ -4,11 +4,12 @@ package life.knowledge4.videotrimmer.view;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import androidx.annotation.NonNull;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+
+import androidx.annotation.NonNull;
 
 import life.knowledge4.videotrimmer.interfaces.OnQualityChooseListener;
 import life.knowledge4.videotrimmer.utils.AndroidUtilities;
@@ -50,6 +51,7 @@ public class QualityChooseView extends View {
     public void setOriginalCompression(int compressionsCount) {
         this.compressionsCount = compressionsCount;
         this.selectedCompression = compressionsCount;
+
         setOriginalHeight();
     }
 
@@ -62,28 +64,24 @@ public class QualityChooseView extends View {
         textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         textPaint.setTextSize(AndroidUtilities.dp(12));
         textPaint.setColor(0xffcdcdcd);
-        this.compressionsCount = 2;
-        this.selectedCompression = 2;
+        this.compressionsCount = 3;
+        this.selectedCompression = 3;
     }
 
     private void setOriginalHeight() {
-        if (compressionsCount == 1) {
-            originalHeight = "360";
-        } else if (compressionsCount == 2) {
-            originalHeight = "360";
-        } else if (compressionsCount == 3) {
-            originalHeight = "480";
-        } else if (compressionsCount == 4) {
+        if (compressionsCount == 2) {
             originalHeight = "720";
-        } else if (compressionsCount == 5) {
+        } else if (compressionsCount == 3) {
             originalHeight = "1080";
+        } else {
+            originalHeight = "480";
         }
     }
 
-  private void setSelectedCompression(int selectedCompression){
-      if (onQualityChooseListener==null) return;
-      onQualityChooseListener.selectedResolution(selectedCompression+1);
-  }
+    private void setSelectedCompression(int selectedCompression) {
+        if (onQualityChooseListener == null) return;
+        onQualityChooseListener.selectedResolution(selectedCompression + 1);
+    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -152,7 +150,7 @@ public class QualityChooseView extends View {
         circleSize = AndroidUtilities.dp(12);
         gapSize = AndroidUtilities.dp(2);
         sideSide = AndroidUtilities.dp(18);
-        if (compressionsCount>1) {
+        if (compressionsCount > 1) {
             lineSize = (getMeasuredWidth() - circleSize * compressionsCount - gapSize * 8 - sideSide * 2) / (compressionsCount - 1);
         }
     }
@@ -171,14 +169,13 @@ public class QualityChooseView extends View {
             if (a == compressionsCount - 1) {
                 text = originalHeight + "p";
             } else if (a == 0) {
-                text = "240p";
-            } else if (a == 1) {
-                text = "360p";
-            } else if (a == 2) {
                 text = "480p";
-            } else {
+            } else if (a == 1){
                 text = "720p";
+            } else {
+                text = "1080p";
             }
+
             float width = textPaint.measureText(text);
             canvas.drawCircle(cx, cy, a == selectedCompression ? AndroidUtilities.dp(8) : circleSize / 2, paint);
             canvas.drawText(text, cx - width / 2, cy - AndroidUtilities.dp(16), textPaint);

@@ -10,7 +10,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 18
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -24,17 +24,19 @@ android {
     }
 }
 
-repositories{
+repositories {
     maven { url 'https://jitpack.io' }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.2.0'
+
     implementation 'com.googlecode.mp4parser:isoparser:1.1.22'
     implementation 'com.github.Kraskovskiy:ExoMedia:feature~update_exoplayer_15.09.20-SNAPSHOT'
     implementation 'com.github.indexOS.media-for-mobile:android:master-SNAPSHOT'
-    implementation 'org.greenrobot:eventbus:3.1.1'
+    implementation 'org.greenrobot:eventbus:3.2.0'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

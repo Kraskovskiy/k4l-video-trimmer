@@ -29,7 +29,6 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -42,6 +41,8 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 import com.devbrackets.android.exomedia.listener.OnCompletionListener;
 import com.devbrackets.android.exomedia.listener.OnErrorListener;
@@ -373,13 +374,11 @@ public class K4LVideoTrimmer extends FrameLayout {
 
     private void getResolutionType() {
         if (defaultVideoWidth >= 1920 || defaultVideoHeight >= 1920) {
-            compressionsCount = 5;
-        } else if (defaultVideoWidth >= 1080 || defaultVideoHeight >= 1080) {
-            compressionsCount = 4;
-        } else if (defaultVideoWidth >= 720 || defaultVideoHeight >= 720) {
             compressionsCount = 3;
-        } else if (defaultVideoWidth >= 480 || defaultVideoHeight >= 480) {
+        } else if (defaultVideoWidth >= 1080 || defaultVideoHeight >= 1080) {
             compressionsCount = 2;
+        } else if (defaultVideoWidth >= 720 || defaultVideoHeight >= 720) {
+            compressionsCount = 1;
         } else {
             compressionsCount = 1;
         }
@@ -387,28 +386,20 @@ public class K4LVideoTrimmer extends FrameLayout {
 
     private void setDefaultVideoResolution(int compressionsCount) {
         if (compressionsCount == 1) {
-            compressItem.setImageResource(R.drawable.video_240);
-        } else if (compressionsCount == 2) {
-            compressItem.setImageResource(R.drawable.video_360);
-        } else if (compressionsCount == 3) {
             compressItem.setImageResource(R.drawable.video_480);
-        } else if (compressionsCount == 4) {
+        } else if (compressionsCount == 2) {
             compressItem.setImageResource(R.drawable.video_720);
-        } else if (compressionsCount == 5) {
+        } else if (compressionsCount == 3) {
             compressItem.setImageResource(R.drawable.video_1080);
         }
     }
 
     private String getResolutionName() {
         if (selectedCompression == 1) {
-            return "240p_";
-        } else if (selectedCompression == 2) {
-            return "360p_";
-        } else if (selectedCompression == 3) {
             return "480p_";
-        } else if (selectedCompression == 4) {
+        } else if (selectedCompression == 2) {
             return "720p_";
-        } else if (selectedCompression == 5) {
+        } else if (selectedCompression == 3) {
             return "1080p_";
         }
         return "";
