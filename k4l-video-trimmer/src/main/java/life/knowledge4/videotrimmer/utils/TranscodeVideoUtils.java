@@ -270,17 +270,17 @@ public class TranscodeVideoUtils {
             } else {
                 videoWidthIn = videoFormat.getVideoFrameSize().width();
                 videoHeightIn = videoFormat.getVideoFrameSize().height();
-                if (videoFormat.getVideoBitRateInKBytes() > 100)
-                    videoBitRateInKBytes = videoFormat.getVideoBitRateInKBytes();
+                try {
+                    if (videoFormat.getVideoBitRateInKBytes() > 100)
+                        videoBitRateInKBytes = videoFormat.getVideoBitRateInKBytes();
+                } catch (Exception e) {
+                    String message = (e.getMessage() != null) ? e.getMessage() : e.toString();
+                    Log.e("Video", message);
+                }
             }
         } catch (Exception e) {
-            // String message = (e.getMessage() != null) ? e.getMessage() : e.toString();
-
-           /* showMessageBox(message, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                }
-            });*/
+             String message = (e.getMessage() != null) ? e.getMessage() : e.toString();
+             Log.e("Video", message);
         }
     }
 
@@ -322,7 +322,6 @@ public class TranscodeVideoUtils {
     }
 
     protected static void transcode(Context context, org.m4m.IProgressListener progressListener) throws Exception {
-
         factory = new AndroidMediaObjectFactory(context);
         mediaComposer = new org.m4m.MediaComposer(factory, progressListener);
         setTranscodeParameters(mediaComposer);

@@ -34,7 +34,7 @@ dependencies {
 
     implementation 'com.googlecode.mp4parser:isoparser:1.1.22'
     implementation 'com.github.Kraskovskiy:ExoMedia:feature~update_exoplayer_15.09.20-SNAPSHOT'
-    implementation 'com.github.Kraskovskiy:media-for-mobile:master-SNAPSHOT'
+    implementation 'com.github.Kraskovskiy.media-for-mobile:android:bugfix~crash_on_pixel_video_06.07.21-SNAPSHOT'
     implementation 'org.greenrobot:eventbus:3.2.0'
 
     testImplementation 'junit:junit:4.12'
