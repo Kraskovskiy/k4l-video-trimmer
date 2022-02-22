@@ -32,7 +32,6 @@ repositories{
     maven {
         url = 'https://oss.sonatype.org/content/repositories/snapshots/'
     }
-    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -48,7 +47,4 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.annotation:annotation:1.1.0'
-
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
-    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
 }
