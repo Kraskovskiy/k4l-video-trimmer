@@ -48,6 +48,7 @@ import com.devbrackets.android.exomedia.listener.OnCompletionListener;
 import com.devbrackets.android.exomedia.listener.OnErrorListener;
 import com.devbrackets.android.exomedia.listener.OnPreparedListener;
 import com.devbrackets.android.exomedia.ui.widget.VideoView;
+import com.google.android.exoplayer2.ExoPlaybackException;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -223,8 +224,11 @@ public class K4LVideoTrimmer extends FrameLayout {
         mVideoView.setOnErrorListener(new OnErrorListener() {
             @Override
             public boolean onError(Exception e) {
-                if (mOnTrimVideoListener != null)
-                    exceptionHandler();
+                if (mOnTrimVideoListener != null) {
+                    if (e instanceof ExoPlaybackException) {
+                        mOnTrimVideoListener.onError(e.getMessage());
+                    } else exceptionHandler();
+                }
                 return false;
             }
         });
