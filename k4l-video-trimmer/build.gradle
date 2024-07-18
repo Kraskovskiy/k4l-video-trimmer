@@ -33,7 +33,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.3.0'
 
     implementation 'com.googlecode.mp4parser:isoparser:1.1.22'
-    implementation 'com.github.Kraskovskiy:ExoMedia:bbb1058098'
+    implementation 'com.github.Kraskovskiy:ExoMedia:bbdb51736d'
     implementation 'com.github.Kraskovskiy.media-for-mobile:android:11810d4c2a'
     implementation 'org.greenrobot:eventbus:3.2.0'
 
