@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 33
 
     compileOptions {
         sourceCompatibility 1.8
@@ -11,8 +11,8 @@ android {
 
     defaultConfig {
         applicationId "life.knowledge4.videocroppersample"
-        minSdkVersion 21
-        targetSdkVersion 28
+        minSdkVersion 26
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
