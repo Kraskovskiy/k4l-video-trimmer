@@ -22,8 +22,8 @@ public class ExampleInstrumentationTest {
     @Test
     public void useAppContext() throws Exception {
         // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getTargetContext();
+        Context appContext = InstrumentationRegistry.getInstrumentation().getContext();
 
-        assertEquals("life.knowledge4.videotrimmer", appContext.getPackageName());
+        assertEquals("life.knowledge4.videotrimmer.test", appContext.getPackageName());
     }
 }
