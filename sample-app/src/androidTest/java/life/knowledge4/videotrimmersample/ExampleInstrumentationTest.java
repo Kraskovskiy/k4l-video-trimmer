@@ -20,10 +20,10 @@ import static org.junit.Assert.*;
 @RunWith(AndroidJUnit4.class)
 public class ExampleInstrumentationTest {
     @Test
-    public void useAppContext() throws Exception {
+    public void useAppContext() {
         // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getTargetContext();
+        Context appContext = InstrumentationRegistry.getInstrumentation().getContext();
 
-        assertEquals("life.knowledge4.videotrimmersample", appContext.getPackageName());
+        assertEquals("life.knowledge4.videocroppersample.test", appContext.getPackageName());
     }
 }
